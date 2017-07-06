@@ -495,9 +495,16 @@ def getInfoLabel(asset_type, item_data):
             channel = '[COLOR blue] | ' + item_data['channel']['name'] + '[/COLOR]'
             info['title'] += channel               
     if asset_type == 'searchresult':
-        info['plot'] = data.get('description', '')
-        info['year'] = data.get('year', '')
-        info['genre'] = data.get('category', '')
+        if extMediaInfos and extMediaInfos == 'false':
+            info['plot'] = data.get('description', '')
+            info['year'] = data.get('year', '')
+            info['genre'] = data.get('category', '')
+        if data.get('type', {}) == 'Film':
+            asset_type = 'Film'
+        elif data.get('type', {}) == 'Episode':
+            asset_type = 'Episode'
+            info['plot'] = 'Folge: ' + data.get('title', '') + '\n\n' + data.get('synopsis', '').replace('\n', '').strip()
+            info['title'] = '%1dx%02d. %s' % (data.get('season_nr', ''), data.get('episode_nr', ''), data.get('serie_title', ''))
     if asset_type == 'Film':
         info['mediatype'] = 'movie'
         if xbmcaddon.Addon().getSetting('lookup_tmdb_data') == 'true' and not data.get('title', '') == '': 
@@ -560,9 +567,7 @@ def listAssets(asset_list, isWatchlist=False):
             if xbmcaddon.Addon().getSetting('lookup_tmdb_data') == 'true' and 'TMDb_poster_path' in item['data']:
                 poster_path = item['data']['TMDb_poster_path'] 
             else:
-                poster_path = getPoster(item['data'])
-            # xbmc.log('Debug-Info: Current Poster in item: %s' % getPoster(item['data']) ) 
-            # xbmc.log('Debug-Info: Current Poster in info: %s' % item['data']['TMDb_poster_path'] )    
+                poster_path = getPoster(item['data']) 
             li.setArt({'poster': poster_path})
         elif item['type'] in ['Series']:
             xbmcplugin.setContent(addon_handle, 'tvshows')
@@ -574,6 +579,11 @@ def listAssets(asset_list, isWatchlist=False):
             li.setArt({'thumb': getHeroImage(item['data'])})
         elif item['type'] == 'searchresult':          
             xbmcplugin.setContent(addon_handle, 'movies')
+            if xbmcaddon.Addon().getSetting('lookup_tmdb_data') == 'true' and 'TMDb_poster_path' in item['data']:
+                poster_path = item['data']['TMDb_poster_path'] 
+            else:
+                poster_path = getPoster(item['data'])
+            li.setArt({'poster': poster_path})
         elif item['type'] == ('live'):
             xbmcplugin.setContent(addon_handle, 'files')
             if 'TMDb_poster_path' in item['data']:
