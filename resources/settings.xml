@@ -4,7 +4,7 @@
       <setting id="email" type="text" visible="false" label="E-Mail" default="" />
       <setting id="password" type="text" visible="false" label="Passwort" default="" />
       <setting id="set_login" type="action" label="Anmelden..." action="RunPlugin(plugin://plugin.video.skygo.de/?action=login)" option="close"/>
-      <setting id="login_acc" type="text" label="Angemeldet als" enable="eq(-100,true)" default="" subsetting="true"/>
+      <setting id="login_acc" type="text" label="Angemeldet als" enable="!eq(0,)" default="" subsetting="true"/>
       <setting id="autoKillSession" type="bool" default="false" label="Andere Sessions automatisch beenden"></setting>
   </category>
   <category label="Jugendschutz">

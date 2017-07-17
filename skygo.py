@@ -155,7 +155,7 @@ class SkyGo:
                     return True
                 return False
             elif response['resultMessage'] == 'KO':
-                xbmcgui.Dialog().notification('Login Fehler', 'Login fehlgeschlagen. Bitte Login-daten überprüfen.', icon=xbmcgui.NOTIFICATION_ERROR)
+                xbmcgui.Dialog().notification('Login Fehler', 'Login fehlgeschlagen. Bitte Login-Daten überprüfen.', icon=xbmcgui.NOTIFICATION_ERROR)
                 return False
             elif response['resultCode'] == 'T_100':
                 # Activate Session with new test if user is logged in
