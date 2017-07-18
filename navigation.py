@@ -88,7 +88,7 @@ def showParentalSettings():
     fsk_list = ['Deaktiviert', '0', '6', '12', '16', '18']
     dlg = xbmcgui.Dialog()
     code = dlg.input('PIN Code', type=xbmcgui.INPUT_NUMERIC)
-    if code == xbmcaddon.Addon().getSetting('password'):
+    if skygo.encode(code) == xbmcaddon.Addon().getSetting('password'):
         idx = dlg.select('Wähle maximale FSK Alterstufe', fsk_list)
         if idx >= 0:
             fsk_code = fsk_list[idx]
