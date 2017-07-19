@@ -297,7 +297,7 @@ class SkyGo:
                 else:
                     dlg = xbmcgui.Dialog()
                     code = dlg.input('PIN Code', type=xbmcgui.INPUT_NUMERIC)
-                    if code == password:
+                    if self.encode(code) == password:
                         return True
                     else:
                         return False

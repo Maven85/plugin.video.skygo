@@ -237,6 +237,15 @@ def listLiveTvChannels(channeldir_name):
 
                 #zeige keine doppelten sender mit gleichem stream - nutze hd falls verfügbar
                 if detail != '':
+                    parental_rating = 0
+                    fskInfo = re.search('(\d+)', event['event']['fskInfo'])                    
+                    if fskInfo:
+                        try:
+                            parental_rating = int(fskInfo.group(1))
+                        except:
+                            pass
+                    event['parental_rating'] = {'value': parental_rating}
+                    
                     if not detail in details.keys():                 
                         details[detail] = {'type': 'live', 'label': event['channel']['name'], 'url': url, 'data': event}
                     elif details[detail]['data']['channel']['hd'] == 0 and event['channel']['hd'] == 1 and event['channel']['name'].find('+') == -1:
@@ -281,10 +290,12 @@ def listEpisodesFromSeason(series_id, season_id):
     for season in data['seasons']['season']:
         if str(season['id']) == str(season_id):
             for episode in season['episodes']['episode']:
-                #Check Altersfreigabe / Jugendschutzeinstellungen
+                                #Check Altersfreigabe / Jugendschutzeinstellungen
+                parental_rating = 0
                 if 'parental_rating' in episode:
+                    parental_rating = episode['parental_rating']['value']
                     if js_showall == 'false':
-                        if not skygo.parentalCheck(episode['parental_rating']['value'], play=False):   
+                        if not skyticket.parentalCheck(parental_rating, play=False):   
                             continue
                 li = xbmcgui.ListItem()
                 li.setProperty('IsPlayable', 'true')
@@ -292,12 +303,11 @@ def listEpisodesFromSeason(series_id, season_id):
                 info, episode = getInfoLabel('Episode', episode)
                 li.setInfo('video', info)
                 li.setLabel(info['title'])
-                li.setArt({'poster': skygo.baseUrl + season['path'], 
+                li.setArt({'poster': skyticket.baseUrl + season['path'], 
                            'fanart': getHeroImage(data),
-                           'thumb': skygo.baseUrl + episode['webplayer_config']['assetThumbnail']})
-                url = common.build_url({'action': 'playVod', 'vod_id': episode['id'], 'infolabels': info})
-                xbmcplugin.addDirectoryItem(handle=addon_handle, url=url,
-                                            listitem=li, isFolder=False)
+                           'thumb': skyticket.baseUrl + episode['webplayer_config']['assetThumbnail']})
+                url = common.build_url({'action': 'playVod', 'vod_id': episode['id'], 'infolabels': info, 'parental_rating': parental_rating})
+                xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=False)
 
     xbmcplugin.addSortMethod(addon_handle, sortMethod=xbmcplugin.SORT_METHOD_EPISODE)
     xbmcplugin.addSortMethod(addon_handle, sortMethod=xbmcplugin.SORT_METHOD_LABEL)
@@ -553,13 +563,15 @@ def listAssets(asset_list, isWatchlist=False):
         if item['type'] in ['Film', 'Episode', 'Sport', 'Clip', 'Series', 'live', 'searchresult']:
             isPlayable = True
             #Check Altersfreigabe / Jugendschutzeinstellungen
+            parental_rating = 0
             if 'parental_rating' in item['data']:
+                parental_rating = item['data']['parental_rating']['value']
                 if js_showall == 'false':
-                    if not skygo.parentalCheck(item['data']['parental_rating']['value'], play=False):   
+                    if not skyticket.parentalCheck(parental_rating, play=False):   
                         continue
-            info, item['data'] = getInfoLabel(item['type'], item['data']) 
+            info, item['data'] = getInfoLabel(item['type'], item['data'])
             li.setInfo('video', info)
-            item['url'] = item['url'] + ('&' if item['url'].find('?') > -1 else '?') + urllib.urlencode({'infolabels': info})
+            item['url'] = item['url'] + ('&' if item['url'].find('?') > -1 else '?') + urllib.urlencode({'infolabels': info, 'parental_rating': parental_rating})
             li.setLabel(info['title'])         
             li.setArt({'poster': getPoster(item['data']), 'fanart': getHeroImage(item['data'])})           
         if item['type'] in ['Film']:

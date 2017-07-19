@@ -1,3 +1,5 @@
+1.0.4
+- Berücksichtigung der FSK-Angaben bei Streamstart
 1.10.3
 - Fix für Jugendschutzeinstellung
 1.10.2
