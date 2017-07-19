@@ -290,12 +290,12 @@ def listEpisodesFromSeason(series_id, season_id):
     for season in data['seasons']['season']:
         if str(season['id']) == str(season_id):
             for episode in season['episodes']['episode']:
-                                #Check Altersfreigabe / Jugendschutzeinstellungen
+                #Check Altersfreigabe / Jugendschutzeinstellungen
                 parental_rating = 0
                 if 'parental_rating' in episode:
                     parental_rating = episode['parental_rating']['value']
                     if js_showall == 'false':
-                        if not skyticket.parentalCheck(parental_rating, play=False):   
+                        if not skygo.parentalCheck(parental_rating, play=False):   
                             continue
                 li = xbmcgui.ListItem()
                 li.setProperty('IsPlayable', 'true')
@@ -303,9 +303,9 @@ def listEpisodesFromSeason(series_id, season_id):
                 info, episode = getInfoLabel('Episode', episode)
                 li.setInfo('video', info)
                 li.setLabel(info['title'])
-                li.setArt({'poster': skyticket.baseUrl + season['path'], 
+                li.setArt({'poster': skygo.baseUrl + season['path'], 
                            'fanart': getHeroImage(data),
-                           'thumb': skyticket.baseUrl + episode['webplayer_config']['assetThumbnail']})
+                           'thumb': skygo.baseUrl + episode['webplayer_config']['assetThumbnail']})
                 url = common.build_url({'action': 'playVod', 'vod_id': episode['id'], 'infolabels': info, 'parental_rating': parental_rating})
                 xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=False)
 
@@ -567,7 +567,7 @@ def listAssets(asset_list, isWatchlist=False):
             if 'parental_rating' in item['data']:
                 parental_rating = item['data']['parental_rating']['value']
                 if js_showall == 'false':
-                    if not skyticket.parentalCheck(parental_rating, play=False):   
+                    if not skygo.parentalCheck(parental_rating, play=False):   
                         continue
             info, item['data'] = getInfoLabel(item['type'], item['data'])
             li.setInfo('video', info)
