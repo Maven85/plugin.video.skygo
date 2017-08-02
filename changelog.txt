@@ -1,4 +1,7 @@
-1.0.4
+1.10.5
+- Anzeige von Streaminfos
+- Hinzufügen von Episoden einer Staffel zur Merkliste
+1.10.4
 - Berücksichtigung der FSK-Angaben bei Streamstart
 1.10.3
 - Fix für Jugendschutzeinstellung
@@ -30,11 +33,11 @@
 - Create Setting Option to choose LiveTV Display Option: Channel name or Title first
 1.9.1
 - Unterstützung für Playready unter Android
-  -> DeviceId in die Usersettings verschoben. Die ID ist dabei eine zufällige Uuid, die beim ersten Start von Skygo generiert wird. Das bedeutet für diejenigen, die die erste Version nutzen und dann updaten, dass eine neue Geräteregistrierung erfolgen wird. 
+  -> DeviceId in die Usersettings verschoben. Die ID ist dabei eine zufällige Uuid, die beim ersten Start von Sky Go generiert wird. Das bedeutet für diejenigen, die die erste Version nutzen und dann updaten, dass eine neue Geräteregistrierung erfolgen wird. 
 - Mehr Medieninformationen + Cachen der Informationen
 - Mehr Sortieroptionen
 - Anzeige von allen Livessendern, wie auf skygo.sky.de + Gruppierung nach Paketen (Bundesliga/Cinema/Entertainment/Sport)
-- Automatisches Scrappen und Cachen von TMDb Filmen in den Settings - Option in den Settings deaktivierbar
+- Automatisches Scrapen und Cachen von TMDb Filmen in den Settings - Option in den Settings deaktivierbar
 1.0.8.1
 - Anpassung für xbmc.gui 5.13.0
 1.0.8
@@ -55,6 +58,6 @@
 - Anzeige der Medieninformationen auch im OSD
 - Umstellung der Menüstruktur (z.B. Serie->Staffeln->Episoden)
 - Option um eigene Logos für die Livesender zu verwenden
-- Unterstützung für SkyGo Extra
+- Unterstützung für Sky Go Extra
 0.0.2
 - Initial release forked from https://github.com/trummerjo/plugin.video.skygo/tree/develop

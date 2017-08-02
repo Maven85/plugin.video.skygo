@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.skygo.de" name="Sky Go" version="1.10.4.1" provider-name="jojo, frankr612, Maven, Linkinsoldier">
+<addon id="plugin.video.skygo.de" name="Sky Go" version="1.10.5" provider-name="jojo, frankr612, Maven, Linkinsoldier">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.requests" version="2.9.1"/>
@@ -12,7 +12,7 @@
     <provides>video</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
-    <summary lang="de">Plugin für SkyGo Deutschland</summary>
+    <summary lang="de">Plugin für Sky Go Deutschland</summary>
     <summary lang="en_gb">Plugin for Sky Go Germany</summary>
     <description lang="de">Abonnenten von Sky Deutschland mit Zugang zu Sky Go (Extra) erhalten Zugriff auf sämtliche Inhalte
     Achtung: Dies ist kein offizielles Addon und wird von Sky Deutschland Fernsehen GmbH &amp; Co. KG nicht unterstützt.

@@ -233,8 +233,8 @@ class SkyGo:
         now = datetime.datetime.now()
         current_date = now.strftime("%d.%m.%Y")
         # Get Epg information
-        print 'http://www.skygo.sky.de/epgd/sg/web/eventList/'+current_date+'/'+epg_channel_id+'/'
-        r = requests.get('http://www.skygo.sky.de/epgd/sg/web/eventList/'+current_date+'/'+epg_channel_id+'/')
+        print 'https://www.skygo.sky.de/epgd/sg/web/eventList/'+current_date+'/'+epg_channel_id+'/'
+        r = requests.get('https://www.skygo.sky.de/epgd/sg/web/eventList/'+current_date+'/'+epg_channel_id+'/')
         events = r.json()[epg_channel_id]
         for event in events:
             start_date = datetime.datetime(*(time.strptime(event['startDate'] + ' ' + event['startTime'], '%d.%m.%Y %H:%M')[0:6]))
@@ -248,7 +248,7 @@ class SkyGo:
     def getEventPlayInfo(self, event_id, epg_channel_id):
         # If not Sky news then get details id else use hardcoded playinfo_url
         if epg_channel_id != '17':
-            r = requests.get('http://www.skygo.sky.de/epgd/sg/web/eventDetail/'+event_id+'/'+epg_channel_id+'/')
+            r = requests.get('https://www.skygo.sky.de/epgd/sg/web/eventDetail/'+event_id+'/'+epg_channel_id+'/')
             event_details_link = r.json()['detailPage']
             # Extract id from details link
             p = re.compile('/([0-9]*)\.html', re.IGNORECASE)
@@ -264,12 +264,12 @@ class SkyGo:
         return entitlement in self.entitlements
 
     def getAssetDetails(self, asset_id):
-        url = 'http://www.skygo.sky.de/sg/multiplatform/web/json/details/asset/' + str(asset_id) + '.json'       
+        url = 'https://www.skygo.sky.de/sg/multiplatform/web/json/details/asset/' + str(asset_id) + '.json'       
         r = self.session.get(url)
         return r.json()['asset']
 
     def getClipDetails(self, clip_id):
-        url = 'http://www.skygo.sky.de/sg/multiplatform/web/json/details/clip/' + str(clip_id) + '.json'       
+        url = 'https://www.skygo.sky.de/sg/multiplatform/web/json/details/clip/' + str(clip_id) + '.json'       
         r = self.session.get(url)
         return r.json()['detail']
 
@@ -308,12 +308,12 @@ class SkyGo:
         # Inputstream settings
         is_addon = getInputstreamAddon()
         if not is_addon:
-            xbmcgui.Dialog().notification('SkyGo Fehler', 'Addon "inputstream.adaptive" fehlt!', xbmcgui.NOTIFICATION_ERROR, 2000, True)
+            xbmcgui.Dialog().notification('Sky Go Fehler', 'Addon "inputstream.adaptive" fehlt!', xbmcgui.NOTIFICATION_ERROR, 2000, True)
             return False
         
         #Jugendschutz
         if not self.parentalCheck(parental_rating, play=True):
-            xbmcgui.Dialog().notification('SkyGo - FSK ' + str(parental_rating), 'Keine Berechtigung zum Abspielen dieses Eintrags.', xbmcgui.NOTIFICATION_ERROR, 2000, True)
+            xbmcgui.Dialog().notification('Sky Go - FSK ' + str(parental_rating), 'Keine Berechtigung zum Abspielen dieses Eintrags.', xbmcgui.NOTIFICATION_ERROR, 2000, True)
             return False
 
         if self.login(username, password):
@@ -336,9 +336,9 @@ class SkyGo:
                 # Start Playing
                 xbmcplugin.setResolvedUrl(addon_handle, True, listitem=li)
             else:
-                xbmcgui.Dialog().notification('SkyGo Fehler', 'Keine Berechtigung zum Abspielen dieses Eintrags', xbmcgui.NOTIFICATION_ERROR, 2000, True)
+                xbmcgui.Dialog().notification('Sky Go Fehler', 'Keine Berechtigung zum Abspielen dieses Eintrags', xbmcgui.NOTIFICATION_ERROR, 2000, True)
         else:
-            xbmcgui.Dialog().notification('SkyGo Fehler', 'Fehler beim Login.', xbmcgui.NOTIFICATION_ERROR, 2000, True)
+            xbmcgui.Dialog().notification('Sky Go Fehler', 'Fehler beim Login.', xbmcgui.NOTIFICATION_ERROR, 2000, True)
             print 'Fehler beim Einloggen'
 
 if len(password) == 4:
