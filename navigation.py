@@ -566,7 +566,7 @@ def getWatchlistContextItem(item, delete=False):
         action = 'watchlistDel'
     if asset_type == 'searchresult':
         asset_type = item['data']['contentType']
-    if asset_type == 'Episode' and delete == False:
+    if delete == False and asset_type == 'Episode' and len(item.get('data').get('episodes', {})) > 0:
         for episode in item.get('data').get('episodes').get('episode'):
             ids.append(str(episode.get('id')))
     else:
