@@ -67,7 +67,6 @@ def rootDir():
             continue
         url = common.build_url({'action': 'listPage', 'id': item.attrib['id']})
         addDir(item.attrib['label'], url)
-        li = xbmcgui.ListItem(item.attrib['label'])
 
     #Merkliste
     watchlistDir()
@@ -81,6 +80,7 @@ def rootDir():
 
 def addDir(label, url, icon=icon_file):
     li = xbmcgui.ListItem(label, iconImage=icon)
+    li.setArt({'thumb': icon})
     xbmcplugin.addDirectoryItem(handle=addon_handle, url=url,
                                 listitem=li, isFolder=True)
 
@@ -180,6 +180,7 @@ def listLiveTvChannelDirs():
     for tab in data:
         url = common.build_url({'action': 'listLiveTvChannels', 'channeldir_name': tab['tabName']})
         li = xbmcgui.ListItem(label=tab['tabName'].title(), iconImage=icon_file)
+        li.setArt({'thumb': icon_file})
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=True)
 
     xbmcplugin.addSortMethod(handle=addon_handle, sortMethod=xbmcplugin.SORT_METHOD_NONE)
@@ -329,7 +330,8 @@ def listSeasonsFromSeries(series_id):
         li = xbmcgui.ListItem(label=label)
         li.setProperty('IsPlayable', 'false')
         li.setArt({'poster': skygo.baseUrl + season['path'], 
-                   'fanart': getHeroImage(data)})
+                   'fanart': getHeroImage(data),
+                   'thumb': icon_file})
         li.setInfo('video', {'plot': data['synopsis'].replace('\n', '').strip()})
         li.addContextMenuItems(getWatchlistContextItem({'type': 'Episode', 'data': season}, False), replaceItems=False)
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=url,
@@ -579,6 +581,7 @@ def listAssets(asset_list, isWatchlist=False):
     for item in asset_list:
         isPlayable = False
         li = xbmcgui.ListItem(label=item['label'], iconImage=icon_file)
+        li.setArt({'thumb': icon_file})
         if item['type'] in ['Film', 'Episode', 'Sport', 'Clip', 'Series', 'live', 'searchresult', 'Season']:
             isPlayable = True
             #Check Altersfreigabe / Jugendschutzeinstellungen
@@ -592,7 +595,7 @@ def listAssets(asset_list, isWatchlist=False):
             li.setInfo('video', info)
             item['url'] = item['url'] + ('&' if item['url'].find('?') > -1 else '?') + urllib.urlencode({'infolabels': info, 'parental_rating': parental_rating})
             li.setLabel(info['title'])         
-            li.setArt({'poster': getPoster(item['data']), 'fanart': getHeroImage(item['data'])})
+            li.setArt({'poster': getPoster(item['data']), 'fanart': getHeroImage(item['data']), 'thumb': getPoster(item['data'])})
             if item['type'] not in ['Series', 'Season']:
                 li = addStreamInfo(li, item['data'])
         if item['type'] in ['Film']:
@@ -601,7 +604,7 @@ def listAssets(asset_list, isWatchlist=False):
                 poster_path = item['data']['TMDb_poster_path'] 
             else:
                 poster_path = getPoster(item['data']) 
-            li.setArt({'poster': poster_path})
+            li.setArt({'poster': poster_path, 'thumb': poster_path})
         elif item['type'] in ['Series', 'Season']:
             xbmcplugin.setContent(addon_handle, 'tvshows')
             isPlayable = False
