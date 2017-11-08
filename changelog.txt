@@ -1,5 +1,6 @@
 1.10.7
 - Hinzufügen von Thumbs zu den Listitems
+- Abhängigkeit zu "inputstream adaptive" und "inputstreamhelper" 
 1.10.6
 - Unterstützung für "Staffelstarts"
 1.10.5

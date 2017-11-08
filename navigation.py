@@ -79,10 +79,8 @@ def rootDir():
     xbmcplugin.endOfDirectory(addon_handle, cacheToDisc=True)
 
 def addDir(label, url, icon=icon_file):
-    li = xbmcgui.ListItem(label, iconImage=icon)
-    li.setArt({'thumb': icon})
-    xbmcplugin.addDirectoryItem(handle=addon_handle, url=url,
-                                listitem=li, isFolder=True)
+    li = xbmcgui.ListItem(label, iconImage=icon, thumbnailImage=icon_file)
+    xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=True)
 
 def showParentalSettings():
     fsk_list = ['Deaktiviert', '0', '6', '12', '16', '18']
@@ -179,8 +177,7 @@ def listLiveTvChannelDirs():
     data = getlistLiveChannelData()
     for tab in data:
         url = common.build_url({'action': 'listLiveTvChannels', 'channeldir_name': tab['tabName']})
-        li = xbmcgui.ListItem(label=tab['tabName'].title(), iconImage=icon_file)
-        li.setArt({'thumb': icon_file})
+        li = xbmcgui.ListItem(label=tab['tabName'].title(), iconImage=icon_file, thumbnailImage=icon_file)
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=True)
 
     xbmcplugin.addSortMethod(handle=addon_handle, sortMethod=xbmcplugin.SORT_METHOD_NONE)
@@ -503,7 +500,8 @@ def getInfoLabel(asset_type, item_data):
                 info['title'] = data.get('title', '')
                 info['plot'] = data.get('synopsis', '').replace('\n', '').strip()
             else:
-                info['plot'] = 'Folge: ' + item_data.get('event', '').get('subtitle', '')
+                if not item_data['channel']['name'].startswith('Sky Cinema'):
+                    info['plot'] = 'Folge: ' + item_data.get('event', '').get('subtitle', '')
                 info['title'] = item_data.get('event', '').get('title', '')
                 info['duration'] = item_data.get('event', '').get('length', 0) * 60
             if data.get('type', {}) == 'Film':
@@ -580,8 +578,7 @@ def getWatchlistContextItem(item, delete=False):
 def listAssets(asset_list, isWatchlist=False):
     for item in asset_list:
         isPlayable = False
-        li = xbmcgui.ListItem(label=item['label'], iconImage=icon_file)
-        li.setArt({'thumb': icon_file})
+        li = xbmcgui.ListItem(label=item['label'], iconImage=icon_file, thumbnailImage=icon_file)
         if item['type'] in ['Film', 'Episode', 'Sport', 'Clip', 'Series', 'live', 'searchresult', 'Season']:
             isPlayable = True
             #Check Altersfreigabe / Jugendschutzeinstellungen
@@ -622,14 +619,18 @@ def listAssets(asset_list, isWatchlist=False):
             li.setArt({'poster': poster_path})
         elif item['type'] == 'live':
             xbmcplugin.setContent(addon_handle, 'files')
-            if 'TMDb_poster_path' in item['data']:
-                poster = item['data']['TMDb_poster_path']
-            elif 'mediainfo' in item['data'] and not item['data']['channel']['name'].startswith('Sky Sport'):
-                poster = getPoster(item['data']['mediainfo'])
-            else:
-                poster = getPoster(item['data']['channel'])
             fanart = skygo.baseUrl + item['data']['event']['image'] if item['data']['channel']['name'].find('News') == -1 else skygo.baseUrl + '/bin/Picture/817/C_1_Picture_7179_content_4.jpg'
             thumb = skygo.baseUrl + item['data']['event']['image'] if item['data']['channel']['name'].find('News') == -1 else getChannelLogo(item['data']['channel'])
+            if 'TMDb_poster_path' in item['data']:
+                poster = item['data']['TMDb_poster_path']
+                thumb = poster
+            elif 'mediainfo' in item['data'] and not item['data']['channel']['name'].startswith('Sky Sport'):
+                poster = getPoster(item['data']['mediainfo'])
+                if item['data']['mediainfo']['type'] == 'Film':
+                    thumb = poster
+                    xbmcplugin.setContent(addon_handle, 'movies')
+            else:
+                poster = getPoster(item['data']['channel'])
             li.setArt({'poster': poster, 'fanart': fanart, 'thumb': thumb})
 
         #add contextmenu item for watchlist to playable content - not for live and clip content
@@ -638,8 +639,7 @@ def listAssets(asset_list, isWatchlist=False):
         elif item['type'] == 'Season':
             li.addContextMenuItems(getWatchlistContextItem({'type': 'Episode', 'data': item['data']}, False), replaceItems=False)
         li.setProperty('IsPlayable', str(isPlayable).lower())
-        xbmcplugin.addDirectoryItem(handle=addon_handle, url=item['url'],
-                                    listitem=li, isFolder=(not isPlayable))
+        xbmcplugin.addDirectoryItem(handle=addon_handle, url=item['url'], listitem=li, isFolder=(not isPlayable))
 
     xbmcplugin.addSortMethod(handle=addon_handle, sortMethod=xbmcplugin.SORT_METHOD_NONE)
     xbmcplugin.addSortMethod(handle=addon_handle, sortMethod=xbmcplugin.SORT_METHOD_LABEL)
