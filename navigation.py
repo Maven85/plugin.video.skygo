@@ -34,8 +34,9 @@ skygo = SkyGo()
 htmlparser = HTMLParser()
 
 #Blacklist: diese nav_ids nicht anzeigen
-#Sport: Datencenter, NewsSection, Aktuell, Snap
-nav_blacklist = [34, 32, 27, 15]
+#15 = Snap
+#Sportsection: 27 = Aktuell, 32 = News, 33 = Mediathek, 34 = Datencenter
+nav_blacklist = [15, 27, 32, 33, 34]
 #Force: anzeige dieser nav_ids erzwingen
 #Sport: Wiederholungen
 nav_force = [35, 36, 37, 161]
