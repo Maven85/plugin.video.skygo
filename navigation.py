@@ -458,6 +458,14 @@ def getInfoLabel(asset_type, item_data):
     info['plot'] = data.get('synopsis', '').replace('\n', '').strip()
     if info['plot'] == '':
         info['plot'] = data.get('description', '').replace('\n', '').strip()
+    if data.get('on_air',{}).get('end_date', '') != '':
+        string_date = data.get('on_air',{}).get('end_date', '')
+        format = '%Y/%m/%d'
+        try:
+            end_date = datetime.datetime.strptime(string_date, format)
+        except TypeError:
+            end_date = datetime.datetime(*(time.strptime(string_date, format)[0:6]))
+        info['plot'] = 'Verfügbar bis ' + end_date.strftime('%d.%m.%Y') + ('\n\n' + info.get('plot') if info.get('plot', None) is not None else '')
     info['duration'] = data.get('lenght', 0) * 60
     if data.get('main_trailer', {}).get('trailer', {}).get('url', '') != '':
         info['trailer'] = data.get('main_trailer', {}).get('trailer', {}).get('url', '')
