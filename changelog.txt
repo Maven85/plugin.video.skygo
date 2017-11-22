@@ -1,3 +1,5 @@
+1.10.8
+- Fix für das Herunterladen von der "widevine lib" unter 64-bit Kodi
 1.10.7
 - Hinzufügen von Thumbs zu den Listitems
 - Abhängigkeit zu "inputstream adaptive" und "inputstreamhelper"
