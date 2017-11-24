@@ -465,7 +465,7 @@ def getInfoLabel(asset_type, item_data):
             end_date = datetime.datetime.strptime(string_date, format)
         except TypeError:
             end_date = datetime.datetime(*(time.strptime(string_date, format)[0:6]))
-        info['plot'] = 'Verfügbar bis ' + end_date.strftime('%d.%m.%Y') + ('\n\n' + info.get('plot') if info.get('plot', None) is not None else '')
+        info['plot'] = htmlparser.unescape('Verf&uuml;gbar bis ' + end_date.strftime('%d.%m.%Y') + ('\n\n' + info.get('plot') if info.get('plot', None) is not None else ''))
     info['duration'] = data.get('lenght', 0) * 60
     if data.get('main_trailer', {}).get('trailer', {}).get('url', '') != '':
         info['trailer'] = data.get('main_trailer', {}).get('trailer', {}).get('url', '')
@@ -776,3 +776,11 @@ def addStreamInfo(listitem, data):
     listitem.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
 
     return listitem
+
+def clearCache():
+    try:
+        assetDetailsCache.delete("%")
+        TMDBCache.delete("%")
+        xbmcgui.Dialog().notification('Sky Go - Cache', 'Leeren des Caches erfolgreich', xbmcgui.NOTIFICATION_INFO, 2000, True)
+    except:
+        xbmcgui.Dialog().notification('Sky Go - Cache', 'Leeren des Caches fehlgeschlagen', xbmcgui.NOTIFICATION_ERROR, 2000, True)

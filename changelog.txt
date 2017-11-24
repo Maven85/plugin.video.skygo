@@ -1,3 +1,6 @@
+1.10.9
+- Fix Encoding
+- Option zum Leeren des Caches
 1.10.8
 - Fix für das Herunterladen von der "widevine lib" unter 64-bit Kodi
 - Anzeige vom Verfügbarkeitsdatum

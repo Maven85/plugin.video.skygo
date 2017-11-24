@@ -19,5 +19,6 @@
       <setting id="lookup_tmdb_data" type="bool" label="Lade die Bewertung und Filmposter von TMDb" default="false" />
       <setting id="channel_name_first" type="bool" label="Live-TV: Sendername zuerst anzeigen?" default="true" />
       <setting id="enable_extended_mediainfos" type="bool" label="Anzeige von zusätzlichen Medieninformationen" default="false" />
+      <setting id="clear_cache" type="action" label="Cache leeren" action="RunPlugin(plugin://plugin.video.skygo.de/?action=clearCache)" />
   </category>
 </settings>

@@ -72,5 +72,8 @@ if 'action' in params:
     elif params['action'] == 'login':
         skygo.setLogin()
 
+    elif params['action'] == 'clearCache':
+        nav.clearCache()
+
 else:
     nav.rootDir()
