@@ -40,6 +40,7 @@ LiveTV:
 - Liste wird nicht mehr gecachet 
 - Überarbeitung der Titelanzeige
 - Inhalte von TMDb wurden nicht angezeigt, wenn die Option für zusätzliche Medieninhalte deaktivert war
+- Anzeige von Start- und Endezeiten
 		</news>
 	</extension>
 </addon>
