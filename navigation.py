@@ -534,9 +534,11 @@ def getInfoLabel(asset_type, item_data):
                 info['title'] = data.get('title', '')
                 info['plot'] = data.get('synopsis', '').replace('\n', '').strip()
             else:
-                if item_data['channel']['name'].startswith('Sky Cinema'):
+                if item_data['channel']['name'].lower().find('cinema') > -1:
                     info['title'] = item_data.get('event', '').get('title', '')
+                    data['title'] = info['title']
                     info['plot'] = item_data.get('event', '').get('subtitle', '')
+                    asset_type = 'Film'
                 else:
                     info['title'] = '[COLOR blue][{}][/COLOR] {}'.format(item_data.get('event', '').get('title', ''), item_data['event'].get('subtitle', ''))
                 info['duration'] = item_data.get('event', '').get('length', 0) * 60
@@ -550,7 +552,7 @@ def getInfoLabel(asset_type, item_data):
             channel = '[COLOR orange][{}][/COLOR] '.format(item_data['channel']['name'])
             info['title'] = channel + info['title']
         else:
-            channel = ' [COLOR orange][' + item_data['channel']['name'] + '][/COLOR]'
+            channel = ' [COLOR orange][{}][/COLOR]'.format(item_data['channel']['name'])
             info['title'] += channel
 
         info['plot'] = item_data.get('event').get('startTime') + ' - ' + item_data.get('event').get('endTime') + "\n\n" + info['plot']

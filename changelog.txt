@@ -1,5 +1,5 @@
 1.10.10
-- LiveTV: Item zum Aktualisieren der Liste; Liste wird nicht mehr gecachet; Überarbeitung der Titelanzeige
+- LiveTV: Item zum Aktualisieren der Liste; Liste wird nicht mehr gecachet; Überarbeitung der Titelanzeige; Bugfix für die Anzeige von TMDb-Inhalten
 1.10.9
 - Fix Encoding
 - Option zum Leeren des Caches
@@ -33,7 +33,7 @@
 - Hinweis eingebaut, dass die User-Ratings und Poster von TMDb bezogen werden.
 - Smoothstream Addon entfernt
 1.9.6
-- Um Trefferwahrscheinlichkeit auf TMDB zu erhöhen, wird - sofern vorhanden - zunächst nach dem Titel inkl. Releasehahr gesucht und erst wenn kein Result kommt (weil Sky die falsche Info gibt), so wird ohne der Titel nochmal ohne Jahr gesucht + Error Handling verbessert
+- Um Trefferwahrscheinlichkeit auf TMDB zu erhöhen, wird - sofern vorhanden - zunächst nach dem Titel inkl. Releasejahr gesucht und erst wenn kein Result kommt (weil Sky die falsche Info gibt), so wird ohne der Titel nochmal ohne Jahr gesucht + Error Handling verbessert
 - Anzeige Live-TV Übersicht verbessert
 1.9.5
 - Anzeige von allen Bundesliga- und Sport-Optionskanälen
