@@ -1,3 +1,7 @@
+1.10.10
+- Listitem zum Aktualisieren der Livesender
+- Listitems der Livesender werden nicht gecachet
+- Überarbeitung der Anzeige von Titel bei Livesendern
 1.10.9
 - Fix Encoding
 - Option zum Leeren des Caches
