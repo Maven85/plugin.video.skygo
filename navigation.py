@@ -534,26 +534,24 @@ def getInfoLabel(asset_type, item_data):
                 info['title'] = data.get('title', '')
                 info['plot'] = data.get('synopsis', '').replace('\n', '').strip()
             else:
-                if item_data['channel']['name'].lower().find('cinema') > -1:
+                if item_data['channel']['name'].lower().find('cinema') > -1 or item_data['channel']['color'].lower() == 'film':
                     info['title'] = item_data.get('event', '').get('title', '')
                     data['title'] = info['title']
                     info['plot'] = item_data.get('event', '').get('subtitle', '')
                     asset_type = 'Film'
                 else:
-                    info['title'] = '[COLOR blue][{}][/COLOR] {}'.format(item_data.get('event', '').get('title', ''), item_data['event'].get('subtitle', ''))
+                    info['title'] = '[COLOR blue]%s |[/COLOR] %s' % (item_data.get('event', '').get('title', ''), item_data['event'].get('subtitle', ''))
                 info['duration'] = item_data.get('event', '').get('length', 0) * 60
             if data.get('type', '') == 'Film':
                 asset_type = 'Film'
             elif data.get('type', '') == 'Episode':
                 asset_type = 'Episode'
                 info['plot'] = data.get('synopsis', '').replace('\n', '').strip()
-                info['title'] = '[COLOR blue][{}][/COLOR] {}'.format(data.get('serie_title', ''), data.get('title', ''))
+                info['title'] = '[COLOR blue]%s |[/COLOR] %s' % (data.get('serie_title', ''), data.get('title', ''))
         if addon.getSetting('channel_name_first') == 'true':
-            channel = '[COLOR orange][{}][/COLOR] '.format(item_data['channel']['name'])
-            info['title'] = channel + info['title']
+            info['title'] = '[COLOR orange][%s][/COLOR] %s' % (item_data['channel']['name'], info['title'])
         else:
-            channel = ' [COLOR orange][{}][/COLOR]'.format(item_data['channel']['name'])
-            info['title'] += channel
+            info['title'] = '%s [COLOR orange][%s][/COLOR]' % (info['title'], item_data['channel']['name'])
 
         info['plot'] = item_data.get('event').get('startTime') + ' - ' + item_data.get('event').get('endTime') + "\n\n" + info['plot']
     if asset_type == 'searchresult':

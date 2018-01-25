@@ -1,3 +1,5 @@
+1.10.10.1
+- Fix Unicode Error
 1.10.10
 - LiveTV
   - Item zum Aktualisieren der Liste

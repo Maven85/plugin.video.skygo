@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.skygo.de" name="Sky Go" version="1.10.10" provider-name="jojo, frankr612, Maven, Linkinsoldier">
+<addon id="plugin.video.skygo.de" name="Sky Go" version="1.10.10.1" provider-name="jojo, frankr612, Maven, Linkinsoldier">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.requests" version="2.9.1"/>
@@ -35,12 +35,7 @@ This product uses the TMDb API (themoviedb.org) but is not endorsed or certified
 		<email></email>
 		<source></source>
 	    <news>
-LiveTV: 
-- Item zum Aktualisieren der Liste
-- Liste wird nicht mehr gecachet 
-- Überarbeitung der Titelanzeige
-- Inhalte von TMDb wurden nicht angezeigt, wenn die Option für zusätzliche Medieninhalte deaktivert war
-- Anzeige von Start- und Endezeiten
+			- Fix Unicode Error
 		</news>
 	</extension>
 </addon>
