@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.skygo.de" name="Sky Go" version="1.10.10.1" provider-name="jojo, frankr612, Maven, Linkinsoldier">
+<addon id="plugin.video.skygo.de" name="Sky Go" version="1.10.10.2" provider-name="jojo, frankr612, Maven, Linkinsoldier">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.requests" version="2.9.1"/>
@@ -34,8 +34,8 @@ This product uses the TMDb API (themoviedb.org) but is not endorsed or certified
 		<website></website>
 		<email></email>
 		<source></source>
-	    <news>
-			- Fix Unicode Error
+		<news>
+			- Fix für die Anzeige der TMDb-Poster
 		</news>
 	</extension>
 </addon>

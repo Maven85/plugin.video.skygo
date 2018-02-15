@@ -484,13 +484,10 @@ def getInfoLabel(asset_type, item_data):
     if info['plot'] == '':
         info['plot'] = data.get('description', '').replace('\n', '').strip()
     if data.get('on_air', {}).get('end_date', '') != '':
-        string_date = data.get('on_air', {}).get('end_date', '')
-        format = '%Y/%m/%d'
-        try:
-            end_date = datetime.datetime.strptime(string_date, format)
-        except TypeError:
-            end_date = datetime.datetime(*(time.strptime(string_date, format)[0:6]))
-        info['plot'] = htmlparser.unescape('Verf&uuml;gbar bis ' + end_date.strftime('%d.%m.%Y') + ('\n\n' + info.get('plot') if info.get('plot', None) is not None else ''))
+        string_end_date = data.get('on_air', {}).get('end_date', '')
+        split_end_date = string_end_date.split('/')
+        if len(split_end_date) == 3:
+            info['plot'] = htmlparser.unescape('Verf&uuml;gbar bis %s.%s.%s\n\n%s' % (split_end_date[2], split_end_date[1], split_end_date[0], info.get('plot') if info.get('plot', None) is not None else ''))
     info['duration'] = data.get('lenght', 0) * 60
     if data.get('main_trailer', {}).get('trailer', {}).get('url', '') != '':
         info['trailer'] = data.get('main_trailer', {}).get('trailer', {}).get('url', '')
@@ -575,13 +572,14 @@ def getInfoLabel(asset_type, item_data):
             else:
                 TMDb_Data = getTMDBDataFromCache(title)
 
-            if TMDb_Data['rating'] is not None:
-                info['rating'] = str(TMDb_Data['rating'])
-                info['plot'] = 'User-Rating: ' + info['rating'] + ' / 10 (from TMDb) \n\n' + info['plot']
-                xbmc.log("Result of get Rating: %s" % (TMDb_Data['rating']))
-            if TMDb_Data['poster_path'] is not None:
-                item_data['TMDb_poster_path'] = TMDb_Data['poster_path']
-                xbmc.log("Path to TMDb Picture: %s" % (TMDb_Data['poster_path']))
+            if len(TMDb_Data) > 0:
+                if TMDb_Data.get('rating', None):
+                    info['rating'] = str(TMDb_Data['rating'])
+                    info['plot'] = 'User-Rating: ' + info['rating'] + ' / 10 (from TMDb) \n\n' + info['plot']
+                    xbmc.log("Result of get Rating: %s" % (TMDb_Data['rating']))
+                if TMDb_Data.get('poster_path', None):
+                    item_data['TMDb_poster_path'] = TMDb_Data['poster_path']
+                    xbmc.log("Path to TMDb Picture: %s" % (TMDb_Data['poster_path']))
     if asset_type == 'Series':
         info['year'] = data.get('year_of_production_start', '')
     if asset_type == 'Episode':
@@ -765,7 +763,11 @@ def getTMDBData(title, year=None, attempt=1, content='movie'):
     tmdb_api = base64.b64decode('YTAwYzUzOTU0M2JlMGIwODE4YmMxOTRhN2JkOTVlYTU=')  # ApiKey Linkinsoldier
     Language = 'de'
     str_year = '&year=' + str(year) if year else ''
+    title = re.sub('(\(.*\))', '', title).strip()
     movie = urllib.quote_plus(title)
+
+    if attempt > 3:
+        return {}
 
     try:
         # Define the moviedb Link zu download the json
@@ -778,11 +780,16 @@ def getTMDBData(title, year=None, attempt=1, content='movie'):
             if result['vote_average']:
                 rating = float(result['vote_average'])
             if result['poster_path']:
-                poster_path = 'https://image.tmdb.org/t/p/w640' + str(result['poster_path'])
+                poster_path = 'https://image.tmdb.org/t/p/w500' + str(result['poster_path'])
             tmdb_id = result['id']
         elif year is not None:
             attempt += 1
             xbmc.log('Try again - without release year - to find Title: %s' % title)
+            return getTMDBData(title, None, attempt)
+        elif title.find('-') > -1:
+            attempt += 1
+            title = title.split('-')[0].strip()
+            xbmc.log('Try again - find Title: %s' % title)
             return getTMDBData(title, None, attempt)
         else:
             xbmc.log('No movie found with Title: %s' % title)
@@ -796,6 +803,7 @@ def getTMDBData(title, year=None, attempt=1, content='movie'):
             xbmc.sleep(5000)
             if attempt < 4:
                 return getTMDBData(title, year, attempt)
+
         return {'tmdb_id': tmdb_id, 'title': title, 'rating': rating , 'poster_path': poster_path}
     return {'tmdb_id': tmdb_id, 'title': title, 'rating': rating , 'poster_path': poster_path}
 
