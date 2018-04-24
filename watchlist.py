@@ -1,18 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
 import json
 import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
 import resources.lib.common as common
-from skygo import SkyGo
 import navigation as nav
-skygo = SkyGo()
+skygo = None
 
-addon_handle = int(sys.argv[1])
 base_url = 'https://www.skygo.sky.de/SILK/services/public/watchlist/'
 
 def rootDir():
@@ -25,7 +22,7 @@ def rootDir():
     url = common.build_url({'action': 'watchlist', 'list': 'Sport'})
     nav.addDir('Sport', url)
 
-    xbmcplugin.endOfDirectory(addon_handle, cacheToDisc=False)    
+    xbmcplugin.endOfDirectory(skygo.addon_handle, cacheToDisc=False)    
 
 def listWatchlist(asset_type, page=0):
     skygo.login()

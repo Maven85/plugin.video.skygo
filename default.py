@@ -11,10 +11,18 @@ from skygo import SkyGo
 import navigation as nav
 import watchlist
 
-skygo = SkyGo()
-addon_handle = int(sys.argv[1])
 plugin_base_url = sys.argv[0]
 params = dict(urlparse.parse_qsl(sys.argv[2][1:]))
+
+addon_handle = int(sys.argv[1])
+skygo = SkyGo(addon_handle)
+
+vod.skygo = skygo
+nav.skygo = skygo
+clips.skygo = skygo
+liveTv.skygo = skygo
+watchlist.skygo = skygo
+
 
 # Router for all plugin actions
 if 'action' in params:

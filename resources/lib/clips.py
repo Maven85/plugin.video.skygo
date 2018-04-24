@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
 import json
 import time
 import base64
@@ -10,8 +9,8 @@ import urllib
 from crypto.cipher import aes_cbc
 #pycrypto
 #from Crypto.Cipher import AES
-from skygo import SkyGo
-skygo = SkyGo()
+
+skygo = None
 
 secret_key = 'XABD-FHIM-GDFZ-OBDA-URDG-TTRI'
 aes_key = ['826cf604accd0e9d61c4aa03b7d7c890', 'da1553b1515bd6f5f48e250a2074d30c']
