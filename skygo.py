@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
 import base64
 import struct
 
@@ -28,7 +27,6 @@ LOGIN_STATUS = { 'SUCCESS': 'T_100',
                   'OTHER_SESSION':'T_206' }
 
 addon = xbmcaddon.Addon()
-addon_handle = int(sys.argv[1])
 autoKillSession = addon.getSetting('autoKillSession')
 username = addon.getSetting('email')
 password = addon.getSetting('password')
@@ -72,12 +70,13 @@ class SkyGo:
     entitlements = []
 
 
-    def __init__(self):
+    def __init__(self, addon_handle):
         self.sessionId = ''
         self.cookiePath = cookiePath
         self.license_url = license_url
         self.license_type = license_type
         self.android_deviceId = android_deviceid
+        self.addon_handle = addon_handle
 
         # Create session with old cookies
         self.session = requests.session()
@@ -336,7 +335,7 @@ class SkyGo:
                     li.setProperty('inputstream.adaptive.license_data', init_data)
                 li.setProperty('inputstreamaddon', 'inputstream.adaptive')
                 # Start Playing
-                xbmcplugin.setResolvedUrl(addon_handle, True, listitem=li)
+                xbmcplugin.setResolvedUrl(self.addon_handle, True, listitem=li)
             else:
                 xbmcgui.Dialog().notification('Sky Go Fehler', 'Keine Berechtigung zum Abspielen dieses Eintrags', xbmcgui.NOTIFICATION_ERROR, 2000, True)
         else:

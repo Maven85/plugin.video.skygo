@@ -1,17 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
 import requests
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
 import ast
-from skygo import SkyGo
 
-addon_handle = int(sys.argv[1])
 addon = xbmcaddon.Addon()
-skygo = SkyGo()
+skygo = None
 
 def playLiveTv(manifest_url, package_code, infolabels='', parental_rating=0):
     #hardcoded apixId for live content

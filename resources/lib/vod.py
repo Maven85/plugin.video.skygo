@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
 import ast
-from skygo import SkyGo
 import navigation as nav
 
-skygo = SkyGo()
+skygo = None
 
 def playAsset(asset_id, infolabels='', parental_rating=0):
     #get asset details and build infotag from it
