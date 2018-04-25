@@ -1,3 +1,5 @@
+1.11.0
+- Vorbereitende Änderung für python3
 1.10.10.2
 - Fix für die Anzeige der TMDb-Poster
 1.10.10.1
