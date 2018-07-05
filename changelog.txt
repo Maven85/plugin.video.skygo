@@ -1,5 +1,9 @@
+1.12.0
+- Aktivieren des Python-Cachings
+- Widgets: Anzeige von Arts
+- LiveTV: Option, um den Listeneintrag 'Aktualisieren' auszublenden
 1.11.0
-- Vorbereitende Änderung für python3
+- Vorbereitende Änderung für Python-Caching
 1.10.10.2
 - Fix für die Anzeige der TMDb-Poster
 1.10.10.1

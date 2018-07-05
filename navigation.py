@@ -201,68 +201,13 @@ def listLiveTvChannels(channeldir_name):
     data = getlistLiveChannelData(channeldir_name)
     for tab in data:
         if tab['tabName'].lower() == channeldir_name.lower():
-            details = {}
-            for event in tab['eventList']:
-                if event['event']['detailPage'].startswith("http"):
-                    detail = event['event']['detailPage']
-                else:
-                    detail = str(event['event']['cmsid'])
-                if 'assetid' not in event['event']:
-                    manifest_url = ''
-                    if 'mediaurl' in event['channel'] and event['channel']['mediaurl'].startswith('http'):
-                        manifest_url = event['channel']['mediaurl']
+            details = getLiveChannelDetails(tab.get('eventList'), None)
 
-                    if not manifest_url.startswith('http') or (extMediaInfos and extMediaInfos == 'true'):
-                        assetid_match = re.search('\/([0-9]*)\.html', event['event']['detailPage'])
-                        if assetid_match:
-                            assetid = 0
-                            try:
-                                assetid = int(assetid_match.group(1))
-                            except:
-                                pass
-                            try:
-                                if assetid > 0:
-                                    mediainfo = getAssetDetailsFromCache(assetid)
-                                    event['mediainfo'] = mediainfo
-                                    if not manifest_url.startswith('http'):
-                                        manifest_url = mediainfo['media_url']
-                                    if not manifest_url.startswith('http'):
-                                        continue
-                            except:
-                                if not manifest_url.startswith('http'):
-                                    continue
-                    url = common.build_url({'action': 'playLive', 'manifest_url': manifest_url, 'package_code': event['channel']['mobilepc']})
-                else:
-                    if event['channel']['msMediaUrl'].startswith('http'):
-                        manifest_url = event['channel']['msMediaUrl']
-                        url = common.build_url({'action': 'playLive', 'manifest_url': manifest_url, 'package_code': event['channel']['mobilepc']})
-                    else:
-                        url = common.build_url({'action': 'playVod', 'vod_id': event['event']['assetid']})
+            if addon.getSetting('show_refresh') == 'true':
+                url = common.build_url({'action': 'refresh'})
+                li = xbmcgui.ListItem(label='Aktualisieren', iconImage=icon_file, thumbnailImage=icon_file)
+                xbmcplugin.addDirectoryItem(handle=skygo.addon_handle, url=url, listitem=li, isFolder=False)
 
-                    try:
-                        if event['event']['assetid'] > 0 and extMediaInfos and extMediaInfos == 'true':
-                            mediainfo = getAssetDetailsFromCache(event['event']['assetid'])
-                            event['mediainfo'] = mediainfo
-                    except:
-                        pass
-
-                # zeige keine doppelten sender mit gleichem stream - nutze hd falls verfügbar
-                if detail != '':
-                    parental_rating = 0
-                    fskInfo = re.search('(\d+)', event['event']['fskInfo'])
-                    if fskInfo:
-                        try:
-                            parental_rating = int(fskInfo.group(1))
-                        except:
-                            pass
-                    event['parental_rating'] = {'value': parental_rating}
-
-                    if not detail in details.keys():
-                        details[detail] = {'type': 'live', 'label': event['channel']['name'], 'url': url, 'data': event}
-                    elif details[detail]['data']['channel']['hd'] == 0 and event['channel']['hd'] == 1 and event['channel']['name'].find('+') == -1:
-                        details[detail] = {'type': 'live', 'label': event['channel']['name'], 'url': url, 'data': event}
-
-            addDir('Aktualisieren', 'xbmc.executebuiltin("container.refresh")')
             listAssets(sorted(details.values(), key=lambda k:k['data']['channel']['name']))
 
 
@@ -294,6 +239,77 @@ def getlistLiveChannelData(channel=''):
         elif tab['tabName'] == 'buli':
             tab['tabName'] = 'bundesliga'
     return sorted(data, key=lambda k: k['tabName'])
+
+
+def getLiveChannelDetails(eventlist, s_manifest_url=None):
+    details = {}
+    for event in eventlist:
+        url = ''
+        manifest_url = ''
+
+        if 'msMediaUrl' in event['channel'] and event['channel']['msMediaUrl'].startswith('http'):
+            manifest_url = event['channel']['msMediaUrl']
+            url = common.build_url({'action': 'playLive', 'manifest_url': manifest_url, 'package_code': event['channel']['mobilepc']})
+        elif s_manifest_url is None and 'assetid' in event['event']:
+            try:
+                if event['event']['assetid'] > 0 and extMediaInfos and extMediaInfos == 'true':
+                    mediainfo = getAssetDetailsFromCache(event['event']['assetid'])
+                    event['mediainfo'] = mediainfo
+            except:
+                pass
+
+            url = common.build_url({'action': 'playVod', 'vod_id': event['event']['assetid']})
+
+        if 'mediainfo' not in event and extMediaInfos and extMediaInfos == 'true':
+            assetid_match = re.search('\/([0-9]*)\.html', event['event']['detailPage'])
+            if assetid_match:
+                assetid = 0
+                try:
+                    assetid = int(assetid_match.group(1))
+                except:
+                    pass
+                try:
+                    if assetid > 0:
+                        mediainfo = getAssetDetailsFromCache(assetid)
+                        event['mediainfo'] = mediainfo
+                        if not manifest_url.startswith('http'):
+                            manifest_url = mediainfo['media_url']
+                        if not manifest_url.startswith('http'):
+                            continue
+                except:
+                    if not manifest_url.startswith('http'):
+                        continue
+
+        if event['event']['detailPage'].startswith("http"):
+            detail = event['event']['detailPage']
+        else:
+            detail = str(event['event']['cmsid'])
+
+        # zeige keine doppelten sender mit gleichem stream - nutze hd falls verfügbar
+        if detail != '':
+            parental_rating = 0
+            fskInfo = re.search('(\d+)', event['event']['fskInfo'])
+            if fskInfo:
+                try:
+                    parental_rating = int(fskInfo.group(1))
+                except:
+                    pass
+            event['parental_rating'] = {'value': parental_rating}
+
+            if not detail in details.keys():
+                details[detail] = {'type': 'live', 'label': event['channel']['name'], 'url': url, 'data': event}
+            elif details[detail]['url'] == '':
+                newlabel = details[detail]['data']['channel']['name']
+                event['channel']['name'] = newlabel
+                details[detail] = {'type': 'live', 'label': newlabel, 'url': url, 'data': event}
+            elif details[detail]['data']['channel']['hd'] == 0 and event['channel']['hd'] == 1 and event['channel']['name'].find('+') == -1:
+                details[detail] = {'type': 'live', 'label': event['channel']['name'], 'url': url, 'data': event}
+
+            if s_manifest_url:
+                if s_manifest_url == manifest_url:
+                    return {detail: details[detail]}
+
+    return {} if s_manifest_url else details
 
 
 def listEpisodesFromSeason(series_id, season_id):
@@ -613,7 +629,8 @@ def listAssets(asset_list, isWatchlist=False):
     cacheToDisc = True
     for item in asset_list:
         isPlayable = False
-        li = xbmcgui.ListItem(label=item['label'], iconImage=icon_file, thumbnailImage=icon_file)
+        params = {}
+        li = xbmcgui.ListItem(label=item['label'], iconImage=icon_file)
         if item['type'] in ['Film', 'Episode', 'Sport', 'Clip', 'Series', 'live', 'searchresult', 'Season']:
             isPlayable = True
             # Check Altersfreigabe / Jugendschutzeinstellungen
@@ -625,18 +642,13 @@ def listAssets(asset_list, isWatchlist=False):
                         continue
             info, item['data'] = getInfoLabel(item['type'], item['data'])
             li.setInfo('video', info)
-            item['url'] = item['url'] + ('&' if item['url'].find('?') > -1 else '?') + urllib.urlencode({'infolabels': info, 'parental_rating': parental_rating})
+            params.update({'infolabels': info, 'parental_rating': parental_rating})
             li.setLabel(info['title'])
-            li.setArt({'poster': getPoster(item['data']), 'fanart': getHeroImage(item['data']), 'thumb': getPoster(item['data'])})
             if item['type'] not in ['Series', 'Season']:
                 li = addStreamInfo(li, item['data'])
+
         if item['type'] in ['Film']:
             xbmcplugin.setContent(skygo.addon_handle, 'movies')
-            if addon.getSetting('lookup_tmdb_data') == 'true' and 'TMDb_poster_path' in item['data']:
-                poster_path = item['data']['TMDb_poster_path']
-            else:
-                poster_path = getPoster(item['data'])
-            li.setArt({'poster': poster_path, 'thumb': poster_path})
         elif item['type'] in ['Series', 'Season']:
             xbmcplugin.setContent(skygo.addon_handle, 'tvshows')
             isPlayable = False
@@ -644,29 +656,13 @@ def listAssets(asset_list, isWatchlist=False):
             xbmcplugin.setContent(skygo.addon_handle, 'episodes')
         elif item['type'] in ['Sport', 'Clip']:
             xbmcplugin.setContent(skygo.addon_handle, 'files')
-            li.setArt({'thumb': getHeroImage(item['data'])})
         elif item['type'] == 'searchresult':
             xbmcplugin.setContent(skygo.addon_handle, 'movies')
-            if addon.getSetting('lookup_tmdb_data') == 'true' and 'TMDb_poster_path' in item['data']:
-                poster_path = item['data']['TMDb_poster_path']
-            else:
-                poster_path = getPoster(item['data'])
-            li.setArt({'poster': poster_path})
         elif item['type'] == 'live':
             cacheToDisc = False
             xbmcplugin.setContent(skygo.addon_handle, 'files')
-            fanart = skygo.baseUrl + item['data']['event']['image'] if item['data']['channel']['name'].find('News') == -1 else skygo.baseUrl + '/bin/Picture/817/C_1_Picture_7179_content_4.jpg'
-            thumb = skygo.baseUrl + item['data']['event']['image'] if item['data']['channel']['name'].find('News') == -1 else getChannelLogo(item['data']['channel'])
             if 'TMDb_poster_path' in item['data'] or ('mediainfo' in item['data'] and not item['data']['channel']['name'].startswith('Sky Sport')):
-                if 'TMDb_poster_path' in item['data']:
-                    poster = item['data']['TMDb_poster_path']
-                else:
-                    poster = getPoster(item['data']['mediainfo'])
-                thumb = poster
                 xbmcplugin.setContent(skygo.addon_handle, 'movies')
-            else:
-                poster = getPoster(item['data']['channel'])
-            li.setArt({'poster': poster, 'fanart': fanart, 'thumb': thumb})
 
         # add contextmenu item for watchlist to playable content - not for live and clip content
         if isPlayable and not item['type'] in ['live', 'Clip']:
@@ -674,7 +670,10 @@ def listAssets(asset_list, isWatchlist=False):
         elif item['type'] == 'Season':
             li.addContextMenuItems(getWatchlistContextItem({'type': 'Episode', 'data': item['data']}, False), replaceItems=False)
         li.setProperty('IsPlayable', str(isPlayable).lower())
-        xbmcplugin.addDirectoryItem(handle=skygo.addon_handle, url=item['url'], listitem=li, isFolder=(not isPlayable))
+        li.setArt(getArt(item))
+        # item['url'] = item['url'] + ('&' if item['url'].find('?') > -1 else '?') + urllib.urlencode({'infolabels': info, 'parental_rating': parental_rating, 'art': art})
+        xbmcplugin.addDirectoryItem(handle=skygo.addon_handle, url=item['url'],
+                                    listitem=li, isFolder=(not isPlayable))
 
     xbmcplugin.addSortMethod(handle=skygo.addon_handle, sortMethod=xbmcplugin.SORT_METHOD_NONE)
     xbmcplugin.addSortMethod(handle=skygo.addon_handle, sortMethod=xbmcplugin.SORT_METHOD_LABEL)
@@ -828,3 +827,39 @@ def clearCache():
         xbmcgui.Dialog().notification('Sky Go - Cache', 'Leeren des Caches erfolgreich', xbmcgui.NOTIFICATION_INFO, 2000, True)
     except:
         xbmcgui.Dialog().notification('Sky Go - Cache', 'Leeren des Caches fehlgeschlagen', xbmcgui.NOTIFICATION_ERROR, 2000, True)
+
+
+def getArt(item):
+    art = {}
+
+    if item['type'] in ['Film', 'Episode', 'Sport', 'Clip', 'Series', 'live', 'searchresult', 'Season']:
+        art.update({'poster': getPoster(item['data']), 'fanart': getHeroImage(item['data'])})
+    if item['type'] in ['Film']:
+        if addon.getSetting('lookup_tmdb_data') == 'true' and 'TMDb_poster_path' in item['data']:
+            poster_path = item['data']['TMDb_poster_path']
+        else:
+            poster_path = getPoster(item['data'])
+        art.update({'poster': poster_path})
+    elif item['type'] in ['Sport', 'Clip']:
+        art.update({'thumb': getHeroImage(item['data'])})
+    elif item['type'] == 'searchresult':
+        if addon.getSetting('lookup_tmdb_data') == 'true' and 'TMDb_poster_path' in item['data']:
+            poster_path = item['data']['TMDb_poster_path']
+        else:
+            poster_path = getPoster(item['data'])
+        art.update({'poster': poster_path})
+    elif item['type'] == 'live':
+        fanart = skygo.baseUrl + item['data']['event']['image'] if item['data']['channel']['name'].find('News') == -1 else skygo.baseUrl + '/bin/Picture/817/C_1_Picture_7179_content_4.jpg'
+        thumb = skygo.baseUrl + item['data']['event']['image'] if item['data']['channel']['name'].find('News') == -1 else getChannelLogo(item['data']['channel'])
+        if 'TMDb_poster_path' in item['data'] or ('mediainfo' in item['data'] and not item['data']['channel']['name'].startswith('Sky Sport')):
+            if 'TMDb_poster_path' in item['data']:
+                poster = item['data']['TMDb_poster_path']
+            else:
+                poster = getPoster(item['data']['mediainfo'])
+            thumb = poster
+            xbmcplugin.setContent(skygo.addon_handle, 'movies')
+        else:
+            poster = getPoster(item['data']['channel'])
+        art.update({'poster': poster, 'fanart': fanart, 'thumb': thumb})
+
+    return art
