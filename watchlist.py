@@ -8,6 +8,7 @@ import xbmcgui
 import xbmcplugin
 import resources.lib.common as common
 import navigation as nav
+
 skygo = None
 
 base_url = 'https://www.skygo.sky.de/SILK/services/public/watchlist/'

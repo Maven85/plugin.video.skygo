@@ -3,7 +3,6 @@
 
 import base64
 import struct
-
 import requests
 import json
 import re
@@ -15,11 +14,9 @@ import xml.etree.ElementTree as ET
 from pyDes import *
 from platform import node
 import uuid
-
 import xbmc
 import xbmcgui
 import xbmcaddon, xbmcplugin
-
 from inputstreamhelper import Helper
 
 LOGIN_STATUS = { 'SUCCESS': 'T_100',

@@ -6,7 +6,6 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
-import ast
 import navigation as nav
 
 addon = xbmcaddon.Addon()

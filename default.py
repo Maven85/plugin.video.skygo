@@ -3,6 +3,7 @@
 
 import sys
 import urlparse
+import ast
 import resources.lib.vod as vod
 import resources.lib.clips as clips
 import resources.lib.liveTv as liveTv
