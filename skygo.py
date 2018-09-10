@@ -326,12 +326,14 @@ class SkyGo:
                 if art_tag:
                     li.setArt(art_tag)
 
-                li.setProperty('inputstream.adaptive.license_type', self.license_type)
-                li.setProperty('inputstream.adaptive.manifest_type', 'ism')
-                if init_data:
-                    li.setProperty('inputstream.adaptive.license_key', self.license_url)
-                    li.setProperty('inputstream.adaptive.license_data', init_data)
                 li.setProperty('inputstreamaddon', 'inputstream.adaptive')
+                li.setProperty('inputstream.adaptive.license_type', self.license_type)
+                li.setProperty('inputstream.adaptive.license_key', self.license_url)
+                li.setProperty('inputstream.adaptive.manifest_type', 'ism')
+                li.setProperty('inputstream.adaptive.license_flags', 'persistent_storage')
+                if init_data:
+                    li.setProperty('inputstream.adaptive.license_data', init_data)
+
                 # Start Playing
                 xbmcplugin.setResolvedUrl(self.addon_handle, True, listitem=li)
             else:
