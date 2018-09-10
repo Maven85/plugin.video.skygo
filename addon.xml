@@ -7,7 +7,7 @@
 		<import addon="script.module.cryptopy" version="1.2.6"/>
 		<import addon="script.common.plugin.cache" version="2.5.8"/>
 		<import addon="script.module.pydes" version="2.0.1"/>
-		<import addon="inputstream.adaptive" version="1.0.8"/>
+		<import addon="inputstream.adaptive" version="2.2.27"/>
 		<import addon="script.module.inputstreamhelper" version="0.2.2"/>
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="default.py">
@@ -35,9 +35,8 @@ This product uses the TMDb API (themoviedb.org) but is not endorsed or certified
 		<email></email>
 		<source></source>
 		<news>
-- Aktivieren des Python-Cachings
-- Widgets: Anzeige von Arts
-- LiveTV: Option, um den Listeneintrag 'Aktualisieren' auszublenden
+- "inputstream.adaptive" V2.2.27 ist erforderlich
+- Property "inputstream.adaptive.license_flags=persistent_storage" gesetzt
 		</news>
 		<reuselanguageinvoker>true</reuselanguageinvoker>
 	</extension>
