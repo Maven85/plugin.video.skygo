@@ -1,3 +1,5 @@
+1.12.2
+- Fix für das Abrufen der LiveTV-Daten
 1.12.1
 - "inputstream.adaptive" V2.2.27 ist erforderlich
 - Property "inputstream.adaptive.license_flags=persistent_storage" gesetzt

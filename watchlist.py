@@ -53,9 +53,9 @@ def addToWatchlist(asset_id, asset_type):
     r = skygo.session.get(url)
     res = json.loads(r.text[3:len(r.text) - 1])
     if res['resultMessage'] == 'OK':
-        xbmcgui.Dialog().notification('Sky Go ', asset_type + ' zur Merkliste hinzugefügt', xbmcgui.NOTIFICATION_INFO, 2000, True)
+        xbmcgui.Dialog().notification('Sky Go: Merkliste', asset_type + ' zur Merkliste hinzugefügt', xbmcgui.NOTIFICATION_INFO, 2000, True)
     else:
-        xbmcgui.Dialog().notification('Sky Go ', asset_type + ' konnte nicht zur Merkliste hinzugefügt werden', xbmcgui.NOTIFICATION_ERROR, 2000, True)
+        xbmcgui.Dialog().notification('Sky Go: Merkliste', asset_type + ' konnte nicht zur Merkliste hinzugefügt werden', xbmcgui.NOTIFICATION_ERROR, 2000, True)
 
 
 def deleteFromWatchlist(asset_id):
@@ -65,4 +65,4 @@ def deleteFromWatchlist(asset_id):
     if res['resultMessage'] == 'OK':
         xbmc.executebuiltin('Container.Refresh')
     else:
-        xbmcgui.Dialog().notification('Sky Go', 'Fehler: Merkliste', xbmcgui.NOTIFICATION_ERROR, 2000, True)
+        xbmcgui.Dialog().notification('Sky Go: Merkliste', 'Eintrag konnte nicht von der Merkliste entfernt werden', xbmcgui.NOTIFICATION_ERROR, 2000, True)

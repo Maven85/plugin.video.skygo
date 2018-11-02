@@ -28,7 +28,6 @@ autoKillSession = addon.getSetting('autoKillSession')
 username = addon.getSetting('email')
 password = addon.getSetting('password')
 
-print autoKillSession
 datapath = xbmc.translatePath(addon.getAddonInfo('profile'))
 cookiePath = datapath + 'COOKIES'
 
@@ -94,17 +93,15 @@ class SkyGo:
         response = r.text[3:-1]
         response = json.loads(response)
 
-        print response
-
         if response['resultMessage'] == 'OK':
             self.sessionId = response['skygoSessionId']
             self.entitlements = response['entitlements']
-            print "User still logged in"
+            xbmc.log('[Sky Go] User still logged in')
             return True
         else:
-            print "User not logged in or Session on other device"
+            xbmc.log('[Sky Go] User not logged in or Session on other device')
             if response['resultCode'] == LOGIN_STATUS['SESSION_INVALID']:
-                print 'Session invalid - Customer Code not found in SilkCache'
+                xbmc.log('[Sky Go] Session invalid - Customer Code not found in SilkCache')
                 return False
         return False
 
@@ -121,9 +118,7 @@ class SkyGo:
         r = self.session.get("https://www.skygo.sky.de/SILK/services/public/session/login?version=12354&platform=web&product=SG&" + login + "&password=" + self.decode(password) + "&remMe=true")
         # Parse jsonp
         response = r.text[3:-1]
-        response = json.loads(response)
-        print response
-        return response
+        return json.loads(response)
 
     def login(self, username=username, password=password, forceLogin=False, askKillSession=True):
         # If already logged in and active session everything is fine
@@ -154,7 +149,7 @@ class SkyGo:
                     return True
                 return False
             elif response['resultMessage'] == 'KO':
-                xbmcgui.Dialog().notification('Login Fehler', 'Login fehlgeschlagen. Bitte Login-Daten überprüfen.', icon=xbmcgui.NOTIFICATION_ERROR)
+                xbmcgui.Dialog().notification('Sky Go: Login', 'Bitte Login-Daten überprüfen.', icon=xbmcgui.NOTIFICATION_ERROR)
                 return False
             elif response['resultCode'] == 'T_100':
                 # Activate Session with new test if user is logged in
@@ -179,7 +174,7 @@ class SkyGo:
                 if self.login(email, password, forceLogin=True, askKillSession=False):
                     addon.setSetting('password', password)
                     addon.setSetting('login_acc', email)
-                    xbmcgui.Dialog().notification('Login erfolgreich', 'Angemeldet als "' + email + '".', icon=xbmcgui.NOTIFICATION_INFO)
+                    xbmcgui.Dialog().notification('Sky Go: Login', 'Angemeldet als "' + email + '".', icon=xbmcgui.NOTIFICATION_INFO)
                 else:
                     addon.setSetting('password', '')
                     addon.setSetting('login_acc', '')
@@ -231,7 +226,7 @@ class SkyGo:
         now = datetime.datetime.now()
         current_date = now.strftime("%d.%m.%Y")
         # Get Epg information
-        print 'https://www.skygo.sky.de/epgd/sg/web/eventList/' + current_date + '/' + epg_channel_id + '/'
+        xbmc.log('[Sky Go]  eventlisturl = https://www.skygo.sky.de/epgd/sg/web/eventList/%s/%s/' % (current_date, epg_channel_id))
         r = requests.get('https://www.skygo.sky.de/epgd/sg/web/eventList/' + current_date + '/' + epg_channel_id + '/')
         events = r.json()[epg_channel_id]
         for event in events:
@@ -305,39 +300,42 @@ class SkyGo:
     def play(self, manifest_url, package_code, parental_rating=0, info_tag=None, art_tag=None, apix_id=None):
         # Inputstream and DRM
         helper = Helper(protocol='ism', drm='widevine')
-        if not helper.check_inputstream():
-            return False
+        if helper.check_inputstream():
+            # Jugendschutz
+            if not self.parentalCheck(parental_rating, play=True):
+                xbmcgui.Dialog().notification('Sky Go: FSK %s', 'Keine Berechtigung zum Abspielen dieses Eintrags.' % parental_rating, xbmcgui.NOTIFICATION_ERROR, 2000, True)
+                xbmc.log('[Sky Go] FSK %s: Keine Berechtigung zum Abspielen' % parental_rating)
 
-        # Jugendschutz
-        if not self.parentalCheck(parental_rating, play=True):
-            xbmcgui.Dialog().notification('Sky Go - FSK ' + str(parental_rating), 'Keine Berechtigung zum Abspielen dieses Eintrags.', xbmcgui.NOTIFICATION_ERROR, 2000, True)
-            return False
+            if self.login(username, password):
+                if self.may_play(package_code):
+                    init_data = None
 
-        if self.login(username, password):
-            if self.may_play(package_code):
-                init_data = None
-                # create init data for license acquiring
-                if apix_id:
-                    init_data = self.get_init_data(self.sessionId, apix_id)
-                # Prepare new ListItem to start playback
-                li = xbmcgui.ListItem(path=manifest_url)
-                if info_tag:
-                    li.setInfo('video', info_tag)
-                if art_tag:
-                    li.setArt(art_tag)
+                    # create init data for license acquiring
+                    if apix_id:
+                        init_data = self.get_init_data(self.sessionId, apix_id)
 
-                li.setProperty('inputstreamaddon', 'inputstream.adaptive')
-                li.setProperty('inputstream.adaptive.license_type', self.license_type)
-                li.setProperty('inputstream.adaptive.license_key', self.license_url)
-                li.setProperty('inputstream.adaptive.manifest_type', 'ism')
-                li.setProperty('inputstream.adaptive.license_flags', 'persistent_storage')
-                if init_data:
-                    li.setProperty('inputstream.adaptive.license_data', init_data)
+                    # Prepare new ListItem to start playback
+                    li = xbmcgui.ListItem(path=manifest_url)
+                    if info_tag:
+                        li.setInfo('video', info_tag)
+                    if art_tag:
+                        li.setArt(art_tag)
 
-                # Start Playing
-                xbmcplugin.setResolvedUrl(self.addon_handle, True, listitem=li)
+                    li.setProperty('inputstreamaddon', 'inputstream.adaptive')
+                    li.setProperty('inputstream.adaptive.license_type', self.license_type)
+                    li.setProperty('inputstream.adaptive.license_key', self.license_url)
+                    li.setProperty('inputstream.adaptive.manifest_type', 'ism')
+                    li.setProperty('inputstream.adaptive.license_flags', 'persistent_storage')
+                    if init_data:
+                        li.setProperty('inputstream.adaptive.license_data', init_data)
+
+                    # Start Playing
+                    xbmcplugin.setResolvedUrl(self.addon_handle, True, li)
+                    return
+                else:
+                    xbmcgui.Dialog().notification('Sky Go: Berechtigung', 'Keine Berechtigung zum Abspielen dieses Eintrags', xbmcgui.NOTIFICATION_ERROR, 2000, True)
+                    xbmc.log('[Sky Go] Keine Berechtigung zum Abspielen')
             else:
-                xbmcgui.Dialog().notification('Sky Go Fehler', 'Keine Berechtigung zum Abspielen dieses Eintrags', xbmcgui.NOTIFICATION_ERROR, 2000, True)
-        else:
-            xbmcgui.Dialog().notification('Sky Go Fehler', 'Fehler beim Login.', xbmcgui.NOTIFICATION_ERROR, 2000, True)
-            print 'Fehler beim Einloggen'
+                xbmc.log('[Sky Go] Fehler beim Login')
+
+        xbmcplugin.setResolvedUrl(self.addon_handle, False, xbmcgui.ListItem(path=''))

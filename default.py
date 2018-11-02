@@ -4,6 +4,7 @@
 import sys
 import urlparse
 import ast
+import xbmc
 import resources.lib.vod as vod
 import resources.lib.clips as clips
 import resources.lib.liveTv as liveTv
@@ -32,7 +33,7 @@ def getDictFromString(str):
 # Router for all plugin actions
 if 'action' in params:
 
-    print params
+    xbmc.log("[Sky Go] params = %s" % params)
 
     if params['action'] == 'playVod':
         vod.playAsset(params['vod_id'], infolabels=getDictFromString(params.get('infolabels', None)), art=getDictFromString(params.get('art', None)), parental_rating=int(params.get('parental_rating', 0)))
