@@ -18,8 +18,9 @@
       <setting id="logoPath" type="folder" default="" visible="!eq(-1,false)" label="Pfad zu den Logos" />
       <setting id="lookup_tmdb_data" type="bool" label="Lade die Bewertung und Filmposter von TMDb" default="false" />
       <setting id="channel_name_first" type="bool" label="Live-TV: Stelle den Sendernamen voran" default="true" />
-      <setting id="show_refresh" type="bool" label="Live-TV: Zeige den Listeneintrag 'Aktualisieren'" default="true" />
       <setting id="enable_extended_mediainfos" type="bool" label="Lade zusätzliche Medieninformationen" default="false" />
+      <setting id="android_drm_widevine" type="bool" label="DRM: Widevine erzwingen (nicht empfohlen)" default="false" visible="System.Platform.Android" />
       <setting id="clear_cache" type="action" label="Cache leeren" action="RunPlugin(plugin://plugin.video.skygo.de/?action=clearCache)" />
+      <setting label="startup" type="bool" id="startup" default="true" visible="false"/>
   </category>
 </settings>

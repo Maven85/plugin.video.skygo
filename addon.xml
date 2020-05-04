@@ -1,42 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.skygo.de" name="Sky Go" version="1.12.2" provider-name="jojo, frankr612, Maven, Linkinsoldier">
-	<requires>
-		<import addon="xbmc.python" version="2.1.0"/>
-		<import addon="script.module.requests" version="2.9.1"/>
-		<import addon="script.module.routing" version="0.2.0"/>
-		<import addon="script.module.cryptopy" version="1.2.6"/>
-		<import addon="script.common.plugin.cache" version="2.5.8"/>
-		<import addon="script.module.pydes" version="2.0.1"/>
-		<import addon="inputstream.adaptive" version="2.2.27"/>
-		<import addon="script.module.inputstreamhelper" version="0.2.2"/>
-	</requires>
-	<extension point="xbmc.python.pluginsource" library="default.py">
-		<provides>video</provides>
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<summary lang="de">Plugin für Sky Go Deutschland</summary>
-		<summary lang="en_gb">Plugin for Sky Go Germany</summary>
-		<description lang="de">
-Abonnenten von Sky Deutschland mit Zugang zu Sky Go (Extra) erhalten Zugriff auf sämtliche Inhalte.
-Achtung: Dies ist kein offizielles Addon und wird von Sky Deutschland Fernsehen GmbH &amp; Co. KG nicht unterstützt.
-Hinweis: Dieses Addon verwendet die TMDb API (themoviedb.org), um User-Ratings und Fanartbilder zu verwenden, aber steht in keinem Zusammenhang bzw. ist nicht zertifiziert von TMDb. Dies kann in den Einstellungen deaktiviert werden.
-		</description>
-		<description lang="en_gb">
-Allows you to stream all your content from german sky go.
-Attention: Addon is unofficial and not related to or supported by Sky Deutschland Fernsehen GmbH &amp; Co. KG.
-This product uses the TMDb API (themoviedb.org) but is not endorsed or certified by TMDb.
-		</description>
-		<disclaimer lang="en_gb"></disclaimer>
-		<language></language>
-		<platform>all</platform>
-		<license></license>
-		<forum></forum>
-		<website></website>
-		<email></email>
-		<source></source>
-		<news>
-- Fix für das Abrufen der LiveTV-Daten
-		</news>
-		<reuselanguageinvoker>true</reuselanguageinvoker>
+<addon id="plugin.video.skygo.de" name="Sky Go" version="1.13.22+matrix.1" provider-name="jojo, frankr612, Maven, Linkinsoldier">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+        <import addon="script.module.requests" version="2.22.0"/>
+        <import addon="script.module.routing" version="0.2.3"/>
+        <import addon="script.module.pycryptodome" version="3.4.3"/>
+        <import addon="script.common.plugin.cache" version="2.6.1.1"/>
+        <import addon="inputstream.adaptive" version="2.2.27"/>
+        <import addon="script.module.inputstreamhelper" version="0.4.4"/>
+        <import addon="script.module.kodi-six" version="0.1.3.1"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.service" library="service.py"/>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="de">Plugin für Sky Go Deutschland</summary>
+        <summary lang="en_gb">Plugin for Sky Go Germany</summary>
+        <description lang="de">Abonnenten von Sky Deutschland mit Zugang zu Sky Go (Extra) erhalten Zugriff auf sämtliche Inhalte.[CR]Achtung: Dies ist kein offizielles Addon und wird von Sky Deutschland Fernsehen GmbH &amp; Co. KG nicht unterstützt.[CR]Hinweis: Dieses Addon verwendet die TMDb API (themoviedb.org), um User-Ratings und Fanartbilder zu verwenden, aber steht in keinem Zusammenhang bzw. ist nicht zertifiziert von TMDb. Dies kann in den Einstellungen deaktiviert werden.</description>
+        <description lang="en_gb">Allows you to stream all your content from german sky go.[CR]Attention: Addon is unofficial and not related to or supported by Sky Deutschland Fernsehen GmbH &amp; Co. KG.[CR]This product uses the TMDb API (themoviedb.org) but is not endorsed or certified by TMDb.</description>
+        <disclaimer lang="en_gb"></disclaimer>
+        <language></language>
+        <platform>all</platform>
+        <license></license>
+        <forum></forum>
+        <website></website>
+        <email></email>
+        <source></source>
+        <assets>
+            <icon>icon.png</icon>
+        </assets>
+        <news>
+1.13.22[CR]- Module 'cryptopy' und 'pydes' durch 'pycryptodome' ersetzt[CR][CR]
+1.13.21[CR]- Assets-Tag in addon.xml hinzugefügt[CR][CR]
+1.13.20[CR]- Änderung der Python-ABI-Version[CR][CR]
+1.13.19[CR]- Einstiegspunkt cachen[CR]- Auflistung nach Anfangsbuchstaben behoben
+        </news>
+        <reuselanguageinvoker>true</reuselanguageinvoker>
 	</extension>
 </addon>
