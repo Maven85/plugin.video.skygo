@@ -1,3 +1,62 @@
+1.13.22
+- Module 'cryptopy' und 'pydes' durch 'pycryptodome' ersetzt
+1.13.21
+- Assets-Tag in addon.xml hinzugefügt
+1.13.20
+- Änderung der Python-ABI-Version
+1.13.19
+- Einstiegspunkt cachen
+- Auflistung nach Anfangsbuchstaben behoben
+1.13.18
+- Fehlerbehebung
+- Anzeige des Channellogos im OSD bei Livesport
+- Ordner mit dem Titel 'Meistgesehen' ausblenden
+1.13.17
+- API-Anpassungen
+1.13.16
+- Fehler beim Abspielen von Livestreams behoben
+1.13.15
+- Suche: Nur Inhalte anzeigen, die der Inhaltskatalog bietet
+1.13.14
+- Fehler in Suche behoben
+1.13.13
+- Suche: Kontextmenüitem 'Zur Serie wechseln', wenn Itemtyp = Episode ist
+1.13.12
+- Encoding-Fehler behoben
+1.13.11
+- Fehler beim Leeren des Caches behoben
+1.13.10
+- Fehler mit dem Asset-Caching behoben
+1.13.9
+- Refactoring
+- Weitere Encoding-/Decoding-Fehler behoben
+1.13.8
+- Encoding-/Decoding-Fehler behoben
+1.13.7
+- Caching-Fehler behoben, wenn keine Daten von der API abgerufen werden konnten
+- Kompabilität zu Python 3
+1.13.6
+- Live Planer: Alte Kategorien ausgeblendet
+- Android: Einstellung zum Erzwingen von Widevine
+- Überprüfung, ob abgerufene Daten JSON sind
+1.13.5
+- LiveTV: Überprüfung auf Manifest-Url = None
+- Wiederholungen aus Sportsektion entfernt
+- Watchlist: Einträge überspringen, für die keine Details abrufbar sind
+1.13.4
+- Wechsel der API
+1.13.3
+- Fix für die Anzeige von Episoden
+1.13.2
+- Widgets: Fix für die Anzeige von Arts im Video OSD
+- 1. Ebene unter Livesender auf statische Liste geändert 
+1.13.1
+- Fix für Widgets
+- LiveTV: Streams ohne Manifest herausfiltern
+1.13.0
+- Fix für Änderungen seitens SkyGo
+1.12.4
+- Fix für das Abrufen der LiveTV-Daten
 1.12.2
 - Fix für das Abrufen der LiveTV-Daten
 1.12.1
