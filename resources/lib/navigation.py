@@ -2,9 +2,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from kodi_six.utils import py2_encode, py2_decode
+
+import _strptime
+
 from base64 import b64decode
 from datetime import datetime, timedelta
-from json import loads
+from json import load, loads
+from math import ceil
 from os.path import basename, join
 from re import search, sub
 from time import mktime, strptime
@@ -80,7 +84,7 @@ class Navigation:
     def rootDir(self):
         nav = self.getNav()
         # Livesender
-        # self.liveChannelsDir()
+        self.liveChannelsDir()
         # Navigation der Ipad App
         for item in nav:
             if item.attrib['hide'] == 'true' or item.tag == 'item':
@@ -268,136 +272,126 @@ class Navigation:
 
 
     def listLiveTvChannels(self, channeldir_name):
-        data = self.getlistLiveChannelData(channeldir_name)
-        for tab in data:
-            if tab['tabName'].lower() == channeldir_name.lower():
-                details = self.getLiveChannelDetails(tab.get('eventList'), None)
-                self.listAssets(sorted(details.values(), key=lambda k:k['data']['channel']['name']))
+        cache_key = '{0}.live.json'.format(self.common.addon_id)
+        cached_data = self.common.memcache.get_cached_item(cache_key)
+        if not cached_data:
+            cached_data = load(py2_decode(open('{0}/resources/live.json'.format(self.common.addon_path))))
+            self.common.memcache.add_cached_item(cache_key, cached_data)
 
-        xbmcplugin.endOfDirectory(self.common.addon_handle, cacheToDisc=False)
+        node = cached_data.get(channeldir_name)
+        service_keys = [str(channel.get('service_key')) for channel in node.get('channels') if channel.get('service_key', 0) != 0]
+        headers = {'X-SkyOTT-Device': 'COMPUTER', 'X-SkyOTT-Language': 'de', 'X-SkyOTT-Platform': 'PC', 'X-SkyOTT-Proposition': 'NOWTV', 'X-SkyOTT-Provider': 'NOWTV', 'X-SkyOTT-Territory': 'DE'}
 
+        channels_json = loads(py2_decode(self.skygo.session.get('https://eu.api.atom.sky.com/adapter-atlas/v3/query/linear_channels', headers=headers).text))
+        channels_attr_json = dict()
+        for channel_json in channels_json:
+            channels_attr_json.update({channel_json.get('attributes').get('serviceKey'): channel_json.get('attributes')})
 
-    def getlistLiveChannelData(self, channel=None, showWarning=True):
-        data = {}
-        r = self.skygo.session.get('{0}/epgd{1}/ipad/excerpt/'.format(self.skygo.baseUrl, self.skygo.baseServicePath))
-        if self.common.get_dict_value(r.headers, 'content-type').startswith('application/json'):
-            data = loads(py2_decode(r.text))
-            for tab in data:
-                if tab['tabName'] == 'film':
-                    tab['tabName'] = 'cinema'
-                elif tab['tabName'] == 'buli':
-                    tab['tabName'] = 'bundesliga'
+        epg_json = []
+        max_epg_size = 20
+        if len(service_keys) > 0:
+            for i in range(0, int(ceil(len(service_keys) / float(max_epg_size)))):
+                epg_url = 'https://roi.epgsky.com/atlantis/linear/nownext/{0}'.format(','.join([service_key for service_key in service_keys[i * max_epg_size:(len(service_keys) if len(service_keys) < (i + 1) * max_epg_size else (i + 1) * max_epg_size)]]))
+                epg_json.extend(loads(py2_decode(self.skygo.session.get(epg_url, headers=headers).text)).get('nowNext'))
 
-            if channel:
-                channel_list = []
+        for channel in node.get('channels'):
+            url = self.common.build_url({'action': 'playLive', 'manifest_url': channel.get('manifest_url'), 'package_code': channel.get('package_code')})
+            channel_data = dict(name=channel.get('label'))
+            event_data = dict()
+            art = dict()
+            programmeUuid = None
+            parentalRatingCode = 0
+            if epg_json:
+                for epg in epg_json:
+                    if epg and epg.get('now') and int(epg.get('serviceKey')) == channel.get('service_key'):
+                        programmeUuid = epg.get('now').get('programmeUuid')
+                        if epg.get('now').get('parentalRatingCode', '') != '':
+                            parentalRatingCode = int(epg.get('now').get('parentalRatingCode'))
+                        event_data.update(dict(
+                                            title=epg.get('now').get('title'),
+                                            plot=epg.get('now').get('description'),
+                                            startTimeStr=datetime.fromtimestamp(epg.get('now').get('startTimeEpoch')).strftime('%H:%M'),
+                                            lenght=epg.get('now').get('durationInSeconds'),
+                                            category=channel.get('category')
+                                            ))
+                        if epg.get('next'):
+                            event_data.update(dict(
+                                                endTime=epg.get('next').get('startTimeEpoch'),
+                                                endTimeStr=datetime.fromtimestamp(epg.get('next').get('startTimeEpoch')).strftime('%H:%M')
+                                                ))
 
-                data = [item for item in data if item['tabName'].lower() == channel.lower()]
-                for tab in data:
-                    for event in tab['eventList']:
-                        if event.get('event').get('assetid', None) is None:
-                            event['event']['assetid'] = search('\/(\d+)\.html', event['event']['detailPage']).group(1) if event['event']['detailPage'].startswith('http') else None
-                        if event.get('event').get('cmsid', None) is None:
-                            event['event']['cmsid'] = int(search('(\d+)', event['event']['image'][event['event']['image'].rfind('_') + 1:]).group(1)) if event['event']['image'].endswith('png') else None
+                        if epg.get('now').get('seasonNumber') and epg.get('now').get('episodeNumber') or \
+                           (epg.get('now').get('description', '') != '' and \
+                           search('(\d+)\.\s+staffel', epg.get('now').get('description').lower()) and search('folge\s+(\d+)', epg.get('now').get('description').lower())):
+                            event_data.update(dict(
+                                                title=epg.get('now').get('description').split('-')[0].strip(),
+                                                tvshowtitle=epg.get('now').get('title')
+                                                ))
+                            if epg.get('now').get('description', '') != '' and \
+                               search('(\d+)\.\s+staffel', epg.get('now').get('description').lower()) and search('folge\s+(\d+)', epg.get('now').get('description').lower()):
+                                event_data.update(dict(
+                                                    plot=epg.get('now').get('description').split(':')[1].strip()
+                                                    ))
+                            if epg.get('now').get('seasonNumber'):
+                                event_data.update(dict(
+                                                    season=epg.get('now').get('seasonNumber')
+                                                    ))
+                            else:
+                                match = search('(\d+)\.\s+staffel', epg.get('now').get('description').lower())
+                                if match:
+                                    event_data.update(dict(
+                                                    season=match.group(1)
+                                                    ))
+                            if epg.get('now').get('episodeNumber'):
+                                event_data.update(dict(
+                                                    episode=epg.get('now').get('episodeNumber')
+                                                    ))
+                            else:
+                                match = search('folge\s+(\d+)', epg.get('now').get('description').lower())
+                                if match:
+                                    event_data.update(dict(
+                                                    episode=match.group(1)
+                                                    ))
+                        if channeldir_name != 'sonstige':
+                            if channels_attr_json.get(channel.get('service_key'), {}).get('logo', {}):
+                                for logo in channels_attr_json.get(channel.get('service_key')).get('logo'):
+                                    if logo.get('type').lower() == 'dark':
+                                        art.update(dict(clearlogo='{0}?output-format=webp'.format(logo.get('template').format(key=logo.get('key'), width='400', height='100'))))
+                            if epg.get('now').get('programmeImageUrlTemplate'):
+                                image = '{0}?output-format=webp'.format(epg.get('now').get('programmeImageUrlTemplate').format(type='16-9', size='1000'))
+                                art.update(dict(poster=image, fanart=image, thumb=image))
+                            else:
+                                art.update(dict(thumb=self.icon_file))
+                        break
 
-                        channel_list.append(event['channel']['name'])
+            if programmeUuid:
+                programm_url = 'https://eu.api.atom.sky.com/adapter-atlas/v3/query/node/uuid/{0}'.format(programmeUuid)
+                programm_json = loads(py2_decode(self.skygo.session.get(programm_url, headers=headers).text)).get('attributes')
+                if programm_json:
+                    event_data.update(dict(
+                                        title=programm_json.get('title'),
+                                        plot=programm_json.get('synopsisLong', event_data.get('plot')),
+                                        year=programm_json.get('year'),
+                                        genre=programm_json.get('genres'),
+                                        cast=programm_json.get('cast'),
+                                        director=programm_json.get('director')
+                                        ))
+                    if programm_json.get('seriesName'):
+                        event_data.update(dict(
+                                            title=programm_json.get('episodeName'),
+                                            tvshowtitle=programm_json.get('seriesName'),
+                                            season=programm_json.get('seasonNumber'),
+                                            episode=programm_json.get('episodeNumber')
+                                            ))
+                    if channeldir_name != 'sonstige' and channel.get('category') == 'cinema':
+                        for image in programm_json.get('images'):
+                            if image.get('type') == 'portrait' and self.skygo.session.get('{0}&output-format=webp'.format(image.get('url'))).status_code == 200:
+                                image = '{0}&output-format=webp'.format(image.get('url'))
+                                art.update(dict(poster=image, thumb=image))
+            channel.update(dict(url=url, art=art, data=dict(channel=channel_data, event=event_data, parental_rating=dict(value=parentalRatingCode))))
 
-                r = self.skygo.session.get('{0}/epgd{1}/web/excerpt/'.format(self.skygo.baseUrl, self.skygo.baseServicePath))
-                if self.common.get_dict_value(r.headers, 'content-type').startswith('application/json'):
-                    data_web = loads(py2_decode(r.text))
-                    data_web = [item for item in data_web if item['tabName'].lower() == channel.lower()]
-                    for tab_web in data_web:
-                        for event_web in tab_web['eventList']:
-                            if event_web['channel']['name'] not in channel_list:
-                                for tab in data:
-                                    if event_web.get('event').get('assetid', None) is None:
-                                        event_web['event']['assetid'] = search('\/(\d+)\.html', event_web['event']['detailPage']).group(1) if event_web['event']['detailPage'].startswith('http') else None
-                                    if event_web.get('event').get('cmsid', None) is None:
-                                        event_web['event']['cmsid'] = int(search('(\d+)', event_web['event']['image'][event_web['event']['image'].rfind('_') + 1:]).group(1)) if event_web['event']['image'].endswith('png') else None
-
-                                    msMediaUrl = None
-                                    if event_web['channel']['mediaurl'].startswith('http'):
-                                        msMediaUrl = event_web['channel']['mediaurl']
-                                    elif event_web['event']['assetid']:
-                                        media_url = self.getAssetDetailsFromCache(event_web['event']['assetid']).get('media_url')
-                                        if media_url and media_url.startswith('http'):
-                                            msMediaUrl = media_url
-
-                                    if msMediaUrl:
-                                        channel_list.append(event_web['channel']['name'])
-                                        event_web['channel']['msMediaUrl'] = msMediaUrl
-                                        tab['eventList'].append(event_web)
-
-        if showWarning and len(data) == 0:
-            xbmcgui.Dialog().notification('Sky Go: Datenabruf', 'Es konnten keine Daten geladen werden', xbmcgui.NOTIFICATION_ERROR, 2000, True)
-
-        return sorted(data, key=lambda k: k['tabName'])
-
-
-    def getLiveChannelDetails(self, eventlist, s_manifest_url=None):
-        details = {}
-        for event in eventlist:
-            url = None
-            manifest_url = None
-
-            if event['channel'].get('msMediaUrl', None) and event['channel']['msMediaUrl'].startswith('http'):
-                manifest_url = event['channel']['msMediaUrl']
-                url = self.common.build_url({'action': 'playLive', 'manifest_url': manifest_url, 'package_code': event['channel']['mobilepc']})
-            elif not s_manifest_url and event.get('event').get('assetid'):
-                if self.extMediaInfos == 'true':
-                    mediainfo = self.getAssetDetailsFromCache(event['event']['assetid'])
-                    if len(mediainfo) > 0:
-                        event['mediainfo'] = mediainfo
-
-                url = self.common.build_url({'action': 'playVod', 'vod_id': event['event']['assetid']})
-
-            if not event.get('mediainfo') and self.extMediaInfos == 'true':
-                assetid_match = search('\/(\d+)\.html', event['event']['detailPage'])
-                if assetid_match:
-                    assetid = 0
-                    try:
-                        assetid = int(assetid_match.group(1))
-                    except:
-                        pass
-
-                    if assetid > 0:
-                        mediainfo = self.getAssetDetailsFromCache(assetid)
-                        if len(mediainfo) > 0:
-                            event['mediainfo'] = mediainfo
-                            if not manifest_url or not manifest_url.startswith('http'):
-                                manifest_url = mediainfo.get('media_url')
-                            if not manifest_url or not manifest_url.startswith('http'):
-                                continue
-
-            if event['event']['detailPage'].startswith("http"):
-                detail = event['event']['detailPage']
-            else:
-                detail = str(event['event']['cmsid'])
-
-            # zeige keine doppelten sender mit gleichem stream - nutze hd falls verfügbar
-            if url and detail != '':
-                parental_rating = 0
-                fskInfo = search('(\d+)', event['event']['fskInfo'])
-                if fskInfo:
-                    try:
-                        parental_rating = int(fskInfo.group(1))
-                    except:
-                        pass
-                event['parental_rating'] = {'value': parental_rating}
-
-                if not detail in details.keys():
-                    details[detail] = {'type': 'live', 'label': event['channel']['name'], 'url': url, 'data': event}
-                elif details[detail]['url'] == '':
-                    newlabel = details[detail]['data']['channel']['name']
-                    event['channel']['name'] = newlabel
-                    details[detail] = {'type': 'live', 'label': newlabel, 'url': url, 'data': event}
-                elif details[detail]['data']['channel']['hd'] == 0 and event['channel']['hd'] == 1 and event['channel']['name'].find('+') == -1:
-                    details[detail] = {'type': 'live', 'label': event['channel']['name'], 'url': url, 'data': event}
-
-                if s_manifest_url and manifest_url:
-                    if s_manifest_url == manifest_url:
-                        return {detail: details[detail]}
-
-        return {} if s_manifest_url else details
+        self.listAssets(node.get('channels'))
+        xbmcplugin.endOfDirectory(self.common.addon_handle, cacheToDisc=True)
 
 
     def listSeasonsFromSeries(self, series_id, call_type):
@@ -572,6 +566,8 @@ class Navigation:
                 li.setLabel(item.get('data').get('li_label') if item.get('data').get('li_label') else info['title'])
                 # if item['type'] not in ['Series', 'Season']:
                 #    li = self.addStreamInfo(li, item['data'])
+                if item.get('data').get('duration'):
+                    li.addStreamInfo('video', {'duration': item.get('data').get('duration')})
 
             if item['type'] in ['Film']:
                 xbmcplugin.setContent(self.common.addon_handle, 'movies')
@@ -586,8 +582,6 @@ class Navigation:
                 xbmcplugin.setContent(self.common.addon_handle, 'movies')
             elif item['type'] == 'live':
                 xbmcplugin.setContent(self.common.addon_handle, 'files')
-                if 'TMDb_poster_path' in item['data'] or ('mediainfo' in item['data'] and not item['data']['channel']['name'].startswith('Sky Sport')):
-                    xbmcplugin.setContent(self.common.addon_handle, 'movies')
 
             contextmenuitems = []
             if item['type'] in ['Film', 'Series', 'Season', 'Episode', 'live']:
@@ -607,7 +601,7 @@ class Navigation:
 
             li.setProperty('IsPlayable', str(isPlayable).lower())
 
-            art = self.getArt(item)
+            art = self.getArt(item) if not item.get('art') else item.get('art')
             if len(art) > 0:
                 additional_params.update({'art': art})
                 li.setArt(art)
@@ -678,43 +672,38 @@ class Navigation:
             info['plot'] = data.get('teaser_long', '')
             info['genre'] = data.get('item_category_name', '')
         if asset_type == 'live':
-            if item_data.get('channel').get('name', '').startswith('Sky Sport'):
-                info['title'] = item_data['event'].get('subtitle', '')
-            if info['title'] == '' and item_data.get('event'):
-                info['title'] = item_data['event'].get('title', '')
-            info['plot'] = data.get('synopsis', '').replace('\n', '').strip() if data.get('synopsis', '') != '' else item_data.get('event').get('subtitle')
-            if item_data.get('channel') and not item_data.get('channel').get('name', '').startswith('Sky Sport'):
-                if 'mediainfo' in item_data:
-                    info['title'] = data.get('title', '')
-                    info['plot'] = data.get('synopsis', '').replace('\n', '').strip()
-                else:
-                    if item_data['channel']['name'].lower().find('cinema') >= 0 or item_data['channel']['color'].lower() == 'film':
-                        info['title'] = item_data.get('event', {}).get('title', '')
-                        data['title'] = info['title']
-                        info['plot'] = item_data.get('event', {}).get('subtitle', '')
-                        asset_type = 'Film'
-                    else:
-                        info['mediatype'] = 'episode'
-                        info['title'] = item_data['event'].get('subtitle', '')
-                        info['tvshowtitle'] = item_data.get('event').get('title', '')
-                        item_data['li_label'] = '[COLOR blue]{0}[/COLOR] {1}'.format(info.get('tvshowtitle'), info.get('title'))
-                    info['duration'] = item_data.get('event', {}).get('length', 0) * 60
-                if data.get('type', '') == 'Film':
-                    asset_type = 'Film'
-                elif data.get('type', '') == 'Episode':
-                    asset_type = 'Episode'
-                    info['mediatype'] = 'episode'
-                    info['plot'] = data.get('synopsis', '').replace('\n', '').strip()
-                    item_data['li_label'] = '[COLOR blue]{0}[/COLOR] {1}'.format(data.get('serie_title', ''), data.get('title', ''))
+            info['title'] = item_data['event'].get('title', '')
+            item_data['li_label'] = item_data['event'].get('title', '')
+            schedule = ''
+            if item_data.get('event').get('startTimeStr') and item_data.get('event').get('endTimeStr'):
+                schedule = '{0} - {1}\n\n'.format(item_data.get('event').get('startTimeStr'), item_data.get('event').get('endTimeStr'))
+            elif item_data.get('event').get('startTimeStr'):
+                schedule = 'Seit {0}\n\n'.format(item_data.get('event').get('startTimeStr'))
+            elif item_data.get('event').get('endTimeStr'):
+                schedule = 'Bis {0}\n\n'.format(item_data.get('event').get('endTimeStr'))
+            info['plot'] = '{0}{1}'.format(schedule, item_data.get('event').get('plot'))
+            info['year'] = item_data.get('event').get('year')
+            info['mediatype'] = 'movie'
+            if item_data.get('event').get('endTime'):
+                delta = datetime.fromtimestamp(item_data.get('event').get('endTime')) - datetime.now()
+                item_data['duration'] = delta.total_seconds()
+            if item_data.get('event').get('tvshowtitle'):
+                info['episode'] = item_data.get('event').get('episode')
+                info['season'] = item_data.get('event').get('season')
+                info['tvshowtitle'] = item_data.get('event').get('tvshowtitle')
+                info['mediatype'] = 'episode'
+                item_data['li_label'] = '[COLOR blue]{0}[/COLOR] {1}'.format(info.get('tvshowtitle'), info.get('title'))
+            if item_data.get('event').get('genre'):
+                info['genre'] = ', '.join(item_data.get('event').get('genre'))
+            if item_data.get('event').get('cast'):
+                info['cast'] = item_data.get('event').get('cast')
+            if item_data.get('event').get('director'):
+                info['director'] = item_data.get('event').get('director')
             if item_data.get('channel'):
                 if self.channel_name_first == 'true':
                     item_data['li_label'] = '[COLOR orange]{0}[/COLOR] {1}'.format(item_data['channel']['name'], item_data.get('li_label') if item_data.get('li_label') else info['title'])
                 else:
                     item_data['li_label'] = '{0} [COLOR orange]{1}[/COLOR]'.format(item_data.get('li_label') if item_data.get('li_label') else info['title'], item_data['channel']['name'])
-
-            info['plot'] = '{0} - {1}\n\n{2}'.format(item_data.get('event').get('startTime'), item_data.get('event').get('endTime'), info['plot'])
-            if item_data.get('event').get('lenght'):
-                info['duration'] = item_data.get('event').get('lenght')
         if asset_type == 'searchresult':
             if self.extMediaInfos == 'false':
                 info['plot'] = data.get('description', '')

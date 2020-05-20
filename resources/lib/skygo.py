@@ -209,7 +209,7 @@ class SkyGo:
 
     def encode(self, data):
         k = DES3.new(self.getmac(), DES3.MODE_CBC, iv=b'\0\0\0\0\0\0\0\0')
-        d = k.encrypt(pad(data, DES3.block_size))
+        d = k.encrypt(pad(data.encode('utf-8'), DES3.block_size))
         return base64.b64encode(d)
 
 

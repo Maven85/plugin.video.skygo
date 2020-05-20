@@ -1,0 +1,447 @@
+{
+	"bundesliga":
+	{
+		"section": "SPORT",
+		"channels":
+		[{
+			"label": "Sky Sport Bundesliga 1",
+			"type": "live",
+			"manifest_url": "http://live2mssskyde.akamaized.net/23021/stream.isml/Manifest",
+			"package_code": "OFBS",
+			"service_key": 105
+		},{
+			"label": "Sky Sport Bundesliga 2",
+			"type": "live",
+			"manifest_url": "http://live2mssskyde.akamaized.net/23022/stream.isml/Manifest",
+			"package_code": "OFBS",
+			"service_key": 267
+		},{
+			"label": "Sky Sport Bundesliga 3",
+			"type": "live",
+			"manifest_url": "http://live2mssskyde.akamaized.net/23023/stream.isml/Manifest",
+			"package_code": "OFBP",
+			"service_key": 277
+		},{
+			"label": "Sky Sport Bundesliga 4",
+			"type": "live",
+			"manifest_url": "http://live2mssskyde.akamaized.net/23024/stream.isml/Manifest",
+			"package_code": "OFBP",
+			"service_key": 287
+		},{
+			"label": "Sky Sport Bundesliga 5",
+			"type": "live",
+			"manifest_url": "http://live2mssskyde.akamaized.net/23025/stream.isml/Manifest",
+			"package_code": "OFBP",
+			"service_key": 297
+		},{
+			"label": "Sky Sport Bundesliga 6",
+			"type": "live",
+			"manifest_url": "http://live2mssskyde.akamaized.net/23026/stream.isml/Manifest",
+			"package_code": "OFBP",
+			"service_key": 307
+		},{
+			"label": "Sky Sport Bundesliga 7",
+			"type": "live",
+			"manifest_url": "http://live2mssskyde.akamaized.net/23027/stream.isml/Manifest",
+			"package_code": "OFBP",
+			"service_key": 317
+		},{
+			"label": "Sky Sport Bundesliga 8",
+			"type": "live",
+			"manifest_url": "http://live2mssskyde.akamaized.net/24028/stream.isml/Manifest",
+			"package_code": "OFBP",
+			"service_key": 327
+		},{
+			"label": "Sky Sport Bundesliga 9",
+			"type": "live",
+			"manifest_url": "http://live2mssskyde.akamaized.net/24029/stream.isml/Manifest",
+			"package_code": "OFBP",
+			"service_key": 337
+		},{
+			"label": "Sky Sport Bundesliga 10",
+			"type": "live",
+			"manifest_url": "http://live1mssskyde.akamaized.net/240210/stream.isml/Manifest",
+			"package_code": "OFBP",
+			"service_key": 257
+		}]
+	},
+	"sport":
+	{
+		"section": "SPORT",
+		"channels":
+		[{
+			"label": "Sky Sport 1",
+			"type": "live",
+			"manifest_url": "http://live3mssskyde.akamaized.net/23031/stream.isml/Manifest",
+			"package_code": "OSPS",
+			"service_key": 129
+		},{
+			"label": "Sky Sport 2",
+			"type": "live",
+			"manifest_url": "http://live1mssskydeleg.akamaized.net/23032/stream.isml/Manifest",
+			"package_code": "OSPS",
+			"service_key": 114
+		},{
+			"label": "Sky Sport Austria 1",
+			"type": "live",
+			"manifest_url": "http://live1mssskydeleg.akamaized.net/23012/stream.isml/Manifest",
+			"package_code": "OSPS",
+			"service_key": 143
+		},{
+			"label": "Sky Sport 3",
+			"type": "live",
+			"manifest_url": "http://live3mssskyde.akamaized.net/24033/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 278
+		},{
+			"label": "Sky Sport 4",
+			"type": "live",
+			"manifest_url": "http://live3mssskyde.akamaized.net/24034/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 278
+		},{
+			"label": "Sky Sport 5",
+			"type": "live",
+			"manifest_url": "http://live3mssskyde.akamaized.net/24035/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 288
+		},{
+			"label": "Sky Sport 6",
+			"type": "live",
+			"manifest_url": "http://live3mssskyde.akamaized.net/24036/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 298
+		},{
+			"label": "Sky Sport 7",
+			"type": "live",
+			"manifest_url": "http://live3mssskyde.akamaized.net/24037/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 308
+		},{
+			"label": "Sky Sport 8",
+			"type": "live",
+			"manifest_url": "http://live3mssskyde.akamaized.net/24038/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 318
+		},{
+			"label": "Sky Sport 9",
+			"type": "live",
+			"manifest_url": "http://live3mssskyde.akamaized.net/24039/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 328
+		},{
+			"label": "Sky Sport 10",
+			"type": "live",
+			"manifest_url": "http://live1mssskyde.akamaized.net/240310/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 338
+		},{
+			"label": "Sky Sport 11",
+			"type": "live",
+			"manifest_url": "http://live1mssskyde.akamaized.net/240311/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 258
+		},{
+			"label": "Sky Sport 12",
+			"type": "live",
+			"manifest_url": "http://live1mssskyde.akamaized.net/240312/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 381
+		},{
+			"label": "Sky Sport 13",
+			"type": "live",
+			"manifest_url": "http://live1mssskyde.akamaized.net/240313/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 386
+		},{
+			"label": "Sky Sport 14",
+			"type": "live",
+			"manifest_url": "http://live1mssskyde.akamaized.net/240314/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 391
+		},{
+			"label": "Sky Sport Austria 2",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/22252/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 329
+		},{
+			"label": "Sky Sport Austria 3",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/22253/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 339
+		},{
+			"label": "Sky Sport Austria 4",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/22254/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 259
+		},{
+			"label": "SPORTDIGITAL FUSSBALL",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/24412/stream.isml/Manifest",
+			"package_code": "OOSP",
+			"service_key": 4120
+		}]
+	},
+	"cinema":
+	{
+		"section": "CINEMA",
+		"channels":
+		[{
+			"label": "Sky Cinema Premieren",
+			"type": "live",
+			"category": "cinema",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/21244/stream.isml/Manifest",
+			"package_code": "OOSF",
+			"service_key": 131
+		},{
+			"label": "Sky Cinema Special",
+			"type": "live",
+			"category": "cinema",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/21143/stream.isml/Manifest",
+			"package_code": "OOSF",
+			"service_key": 111
+		},{
+			"label": "Sky Cinema Action",
+			"type": "live",
+			"category": "cinema",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/21245/stream.isml/Manifest",
+			"package_code": "OOSF",
+			"service_key": 116
+		},{
+			"label": "Sky Cinema Best Of",
+			"type": "live",
+			"category": "cinema",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/212414/stream.isml/Manifest",
+			"package_code": "OOSF",
+			"service_key": 107
+		},{
+			"label": "Sky Cinema Classics",
+			"type": "live",
+			"category": "cinema",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/222425/stream.isml/Manifest",
+			"package_code": "OOSF",
+			"service_key": 516
+		},{
+			"label": "Sky Cinema Family",
+			"type": "live",
+			"category": "cinema",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/212413/stream.isml/Manifest",
+			"package_code": "OOSF",
+			"service_key": 139
+		},{
+			"label": "Sky Cinema Fun",
+			"type": "live",
+			"category": "cinema",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/222421/stream.isml/Manifest",
+			"package_code": "OOSF",
+			"service_key": 8
+		},{
+			"label": "Sky Cinema Thriller",
+			"type": "live",
+			"category": "cinema",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/222436/stream.isml/Manifest",
+			"package_code": "OOSF",
+			"service_key": 11
+		},{
+			"label": "TNT Film",
+			"type": "live",
+			"category": "cinema",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/222434/stream.isml/Manifest",
+			"package_code": "OOSF",
+			"service_key": 140
+		},{
+			"label": "Kinowelt.TV",
+			"type": "live",
+			"category": "cinema",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/222433/stream.isml/Manifest",
+			"package_code": "OOSF",
+			"service_key": 406
+		},{
+			"label": "Beate-Uhse TV",
+			"type": "live",
+			"category": "cinema",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/21243/stream.isml/Manifest",
+			"package_code": "OOSF",
+			"service_key": 133
+		}]
+	},
+	"entertainment":
+	{
+		"section": "ENTERTAINMENT",
+		"channels":
+		[{
+			"label": "13th Street",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/21241/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 127
+		},{
+			"label": "Boomerang",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/21145/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 28
+		},{
+			"label": "Cartoon Network",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/222432/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 404
+		},{
+			"label": "Classica",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/21246/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 24
+		},{
+			"label": "Crime + Investigation",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/21242/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 402
+		},{
+			"label": "Discovery Channel",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/211413/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 130
+		},{
+			"label": "E! Entertainment",
+			"type": "live",
+			"category": "test",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/21248/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 128
+		},{
+			"label": "FOX",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/21146/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 124
+		},{
+			"label": "Heimatkanal",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/21249/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 22
+		},{
+			"label": "History",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/212410/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 113
+		},{
+			"label": "Jukebox",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/212411/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 401
+		},{
+			"label": "Junior",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/212412/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 19
+		},{
+			"label": "NatGeo",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/221410/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 112
+		},{
+			"label": "NatGeo Wild",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/212415/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 118
+		},{
+			"label": "Nicktoons",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/222429/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 27
+		},{
+			"label": "Nick. Jr.",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/21144/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 8667
+		},{
+			"label": "Romance TV",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/212416/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 518
+		},{
+			"label": "Sky Atlantic",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/21141/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 110
+		},{
+			"label": "Sky Krimi",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/222426/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 23
+		},{
+			"label": "Sky One",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/221412/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 147
+		},{
+			"label": "Sky Serien und Shows",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/22241/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 117
+		},{
+			"label": "Sky Sport News",
+			"type": "live",
+			"manifest_url": "http://live1mssskyde.akamaized.net/23011/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 108
+		},{
+			"label": "Spiegel Geschichte",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/22148/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 137
+		},{
+			"label": "Spiegel TV Wissen",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/222431/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 49
+		},{
+			"label": "Syfy",
+			"type": "live",
+			"category": "test",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/222427/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 126
+		},{
+			"label": "TNT Comedy",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/221411/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 136
+		},{
+			"label": "TNT Serie",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/22149/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 123
+		},{
+			"label": "Universal TV",
+			"type": "live",
+			"manifest_url": "http://welt1mssskyde.akamaized.net/222428/stream.isml/Manifest",
+			"package_code": "OOFH",
+			"service_key": 101
+		}]
+	}
+}
