@@ -382,6 +382,7 @@ class SkyGo:
                     if art_tag:
                         li.setArt(art_tag)
 
+                    li.setProperty('inputstream', 'inputstream.adaptive')
                     li.setProperty('inputstreamaddon', 'inputstream.adaptive')
                     li.setProperty('inputstream.adaptive.license_type', self.license_type)
                     li.setProperty('inputstream.adaptive.manifest_type', 'ism')
