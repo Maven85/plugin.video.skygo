@@ -1,3 +1,6 @@
+1.14.0
+- Neues Property für Inputstream-Addons mit Kodi 19 hinzugefügt
+- Livesender hinzugefügt
 1.13.22
 - Module 'cryptopy' und 'pydes' durch 'pycryptodome' ersetzt
 1.13.21

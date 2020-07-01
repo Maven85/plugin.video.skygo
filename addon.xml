@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.skygo.de" name="Sky Go" version="1.13.22+matrix.1" provider-name="jojo, frankr612, Maven, Linkinsoldier">
+<addon id="plugin.video.skygo.de" name="Sky Go" version="1.14.0+matrix.1" provider-name="jojo, frankr612, Maven, Linkinsoldier">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="script.module.requests" version="2.22.0"/>
@@ -31,10 +31,10 @@
             <icon>icon.png</icon>
         </assets>
         <news>
+1.14.0[CR]- Neues Property für Inputstream-Addons mit Kodi 19 hinzugefügt[CR]- Livesender hinzugefügt[CR][CR]
 1.13.22[CR]- Module 'cryptopy' und 'pydes' durch 'pycryptodome' ersetzt[CR][CR]
 1.13.21[CR]- Assets-Tag in addon.xml hinzugefügt[CR][CR]
 1.13.20[CR]- Änderung der Python-ABI-Version[CR][CR]
-1.13.19[CR]- Einstiegspunkt cachen[CR]- Auflistung nach Anfangsbuchstaben behoben
         </news>
         <reuselanguageinvoker>true</reuselanguageinvoker>
 	</extension>
