@@ -1,3 +1,5 @@
+1.14.1
+- API-Abschaltung: Nur noch Livestreams anzeigen, VoD funktioniert nicht mehr
 1.14.0
 - Neues Property für Inputstream-Addons mit Kodi 19 hinzugefügt
 - Livesender hinzugefügt
