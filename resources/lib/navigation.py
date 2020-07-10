@@ -82,10 +82,12 @@ class Navigation:
 
 
     def rootDir(self):
-        nav = self.getNav()
         # Livesender
-        self.liveChannelsDir()
+        self.listLiveTvChannelDirs()
+
+        '''
         # Navigation der Ipad App
+        nav = self.getNav()
         for item in nav:
             if item.attrib['hide'] == 'true' or item.tag == 'item':
                 continue
@@ -97,6 +99,7 @@ class Navigation:
         # Suchfunktion
         url = self.common.build_url({'action': 'search'})
         self.addDir('Suche', url)
+        '''
 
         xbmcplugin.endOfDirectory(self.common.addon_handle, cacheToDisc=True)
 
@@ -352,16 +355,15 @@ class Navigation:
                                     event_data.update(dict(
                                                     episode=match.group(1)
                                                     ))
-                        if channeldir_name != 'sonstige':
-                            if channels_attr_json.get(channel.get('service_key'), {}).get('logo', {}):
-                                for logo in channels_attr_json.get(channel.get('service_key')).get('logo'):
-                                    if logo.get('type').lower() == 'dark':
-                                        art.update(dict(clearlogo='{0}?output-format=webp'.format(logo.get('template').format(key=logo.get('key'), width='400', height='100'))))
-                            if epg.get('now').get('programmeImageUrlTemplate'):
-                                image = '{0}?output-format=webp'.format(epg.get('now').get('programmeImageUrlTemplate').format(type='16-9', size='1000'))
-                                art.update(dict(poster=image, fanart=image, thumb=image))
-                            else:
-                                art.update(dict(thumb=self.icon_file))
+                        if channels_attr_json.get(channel.get('service_key'), {}).get('logo', {}):
+                            for logo in channels_attr_json.get(channel.get('service_key')).get('logo'):
+                                if logo.get('type').lower() == 'dark':
+                                    art.update(dict(clearlogo='{0}?output-format=webp'.format(logo.get('template').format(key=logo.get('key'), width='400', height='100'))))
+                        if epg.get('now').get('programmeImageUrlTemplate'):
+                            image = '{0}?output-format=webp'.format(epg.get('now').get('programmeImageUrlTemplate').format(type='16-9', size='1000'))
+                            art.update(dict(poster=image, fanart=image, thumb=image))
+                        else:
+                            art.update(dict(thumb=self.icon_file))
                         break
 
             if programmeUuid:
@@ -383,7 +385,7 @@ class Navigation:
                                             season=programm_json.get('seasonNumber'),
                                             episode=programm_json.get('episodeNumber')
                                             ))
-                    if channeldir_name != 'sonstige' and channel.get('category') == 'cinema':
+                    if channel.get('category') == 'cinema':
                         for image in programm_json.get('images'):
                             if image.get('type') == 'portrait' and self.skygo.session.get('{0}&output-format=webp'.format(image.get('url'))).status_code == 200:
                                 image = '{0}&output-format=webp'.format(image.get('url'))
