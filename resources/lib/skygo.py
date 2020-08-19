@@ -18,8 +18,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 from inputstreamhelper import Helper
-from Cryptodome.Cipher import DES3
-from Cryptodome.Util.Padding import pad, unpad
+from pyDes import triple_des, CBC, PAD_PKCS5
 
 try:
     from urllib.parse import urlencode
@@ -208,16 +207,16 @@ class SkyGo:
 
 
     def encode(self, data):
-        k = DES3.new(self.getmac(), DES3.MODE_CBC, iv=b'\0\0\0\0\0\0\0\0')
-        d = k.encrypt(pad(data.encode('utf-8'), DES3.block_size))
+        k = triple_des(self.getmac(), CBC, py2_encode("\0\0\0\0\0\0\0\0"), padmode=PAD_PKCS5)
+        d = k.encrypt(data)
         return base64.b64encode(d)
 
 
     def decode(self, data):
         if not data:
             return ''
-        k = DES3.new(self.getmac(), DES3.MODE_CBC, iv=b'\0\0\0\0\0\0\0\0')
-        d = unpad(k.decrypt(base64.b64decode(data)), DES3.block_size)
+        k = triple_des(self.getmac(), CBC, py2_encode("\0\0\0\0\0\0\0\0"), padmode=PAD_PKCS5)
+        d = k.decrypt(base64.b64decode(data))
         return d.decode('utf-8')
 
 
